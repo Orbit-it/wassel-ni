@@ -1,0 +1,1380 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} App {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+  <style>
+          /* Conteneur personnalisé pour ajouter la flèche */
+      .custom-select-container {
+          position: relative;
+          width: 100%;
+      }
+
+      /* Style du champ de sélection */
+      .custom-select {
+          padding-right: 30px; /* Espace pour la flèche */
+      }
+
+      /* Flèche à droite du champ de sélection */
+      .custom-select-container::after {
+          content: '▼';  /* Flèche vers le bas */
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 16px;
+          color: #555;  /* Couleur de la flèche */
+          pointer-events: none; /* Empêche la flèche d'interférer avec l'interaction de l'utilisateur */
+      }
+
+              /* Style général du modal */
+
+              /* Style général du modal */
+
+/* Style de la boîte de chat */
+.modal-header {
+  background-color: #4fe884;
+}
+.chat-box {
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: #e5ddd5; /* Couleur de fond neutre */
+}
+
+/* Style des messages */
+.chat-box .message {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-box .message-content {
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 80%;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Message du passager (aligné à gauche) */
+.chat-box .message.passenger {
+    align-items: flex-start;
+}
+
+.chat-box .message.passenger .message-content {
+    background-color: #d1e7dd;
+    color: #000;
+    margin-right: auto; /* Pour aligner à gauche */
+    border-radius: 20px 20px 0 20px; /* Coin arrondi à droite */
+}
+
+/* Message du chauffeur (aligné à droite) */
+.chat-box .message.driver {
+    align-items: flex-end;
+}
+
+.chat-box .message.driver .message-content {
+    background-color: #c3e6cb;
+    color: #000;
+    margin-left: auto; /* Pour aligner à droite */
+    border-radius: 20px 20px 20px 0; /* Coin arrondi à gauche */
+}
+
+/* Style de la zone de saisie des messages */
+
+/* Style du bouton d'envoi */
+#sendMessageBtn {
+    
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Style pour rendre le bouton désactivé si le champ est vide */
+#sendMessageBtn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+.modal {
+    overflow-y: auto; /* Scroll uniquement dans le modal */
+    max-height: 90vh; /* Limiter la hauteur pour garder un espace visible */
+}
+
+.modal-open {
+    overflow: hidden; /* Empêche le scroll de la page lorsqu'un modal est ouvert */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+    margin-right: 10px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 25px;
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #28a745;
+}
+
+input:checked + .slider::before {
+    transform: translateX(25px);
+}
+
+       
+
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="container-fluid">
+
+      <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('{{ ASSETS_ROOT }}/img/curved-images/WASSELNI.png'); background-position-y: 50%;">
+        <span class="mask bg-gradient-info opacity-6"></span>
+      </div>
+
+      
+      <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+        <div class="row gx-4">
+          <div class="col-auto">
+            <div class="avatar avatar-xl position-relative">
+              <img src="{{ ASSETS_ROOT }}/img/bruce-mars.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+            </div>
+          </div>
+          <div class="col-auto my-auto">
+            <div class="h-100">
+              <h5 class="mb-1">
+                {{ request.user.username }}
+              </h5>
+              <p class="mb-0 font-weight-bold text-sm">
+
+                {% if request.user.email %}
+                  {{ request.user.email }}
+                {% else %}
+                  Authenticated with Github
+                {% endif %}
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+            <div class="nav-wrapper position-relative end-0">
+              <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
+                    <svg class="text-dark" width="16px" height="16px" viewBox="0 0 40 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                      <title>document</title>
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g transform="translate(-1870.000000, -591.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                          <g transform="translate(1716.000000, 291.000000)">
+                            <g transform="translate(154.000000, 300.000000)">
+                              <path class="color-background" d="M40,40 L36.3636364,40 L36.3636364,3.63636364 L5.45454545,3.63636364 L5.45454545,0 L38.1818182,0 C39.1854545,0 40,0.814545455 40,1.81818182 L40,40 Z" opacity="0.603585379"></path>
+                              <path class="color-background" d="M30.9090909,7.27272727 L1.81818182,7.27272727 C0.814545455,7.27272727 0,8.08727273 0,9.09090909 L0,41.8181818 C0,42.8218182 0.814545455,43.6363636 1.81818182,43.6363636 L30.9090909,43.6363636 C31.9127273,43.6363636 32.7272727,42.8218182 32.7272727,41.8181818 L32.7272727,9.09090909 C32.7272727,8.08727273 31.9127273,7.27272727 30.9090909,7.27272727 Z M18.1818182,34.5454545 L7.27272727,34.5454545 L7.27272727,30.9090909 L18.1818182,30.9090909 L18.1818182,34.5454545 Z M25.4545455,27.2727273 L7.27272727,27.2727273 L7.27272727,23.6363636 L25.4545455,23.6363636 L25.4545455,27.2727273 Z M25.4545455,20 L7.27272727,20 L7.27272727,16.3636364 L25.4545455,16.3636364 L25.4545455,20 Z">
+                              </path>
+                            </g>
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                    <span class="ms-1">Messages</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
+                    <svg class="text-dark" width="16px" height="16px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                      <title>settings</title>
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g transform="translate(-2020.000000, -442.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                          <g transform="translate(1716.000000, 291.000000)">
+                            <g transform="translate(304.000000, 151.000000)">
+                              <polygon class="color-background" opacity="0.596981957" points="18.0883333 15.7316667 11.1783333 8.82166667 13.3333333 6.66666667 6.66666667 0 0 6.66666667 6.66666667 13.3333333 8.82166667 11.1783333 15.315 17.6716667">
+                              </polygon>
+                              <path class="color-background" d="M31.5666667,23.2333333 C31.0516667,23.2933333 30.53,23.3333333 30,23.3333333 C29.4916667,23.3333333 28.9866667,23.3033333 28.48,23.245 L22.4116667,30.7433333 L29.9416667,38.2733333 C32.2433333,40.575 35.9733333,40.575 38.275,38.2733333 L38.275,38.2733333 C40.5766667,35.9716667 40.5766667,32.2416667 38.275,29.94 L31.5666667,23.2333333 Z" opacity="0.596981957"></path>
+                              <path class="color-background" d="M33.785,11.285 L28.715,6.215 L34.0616667,0.868333333 C32.82,0.315 31.4483333,0 30,0 C24.4766667,0 20,4.47666667 20,10 C20,10.99 20.1483333,11.9433333 20.4166667,12.8466667 L2.435,27.3966667 C0.95,28.7083333 0.0633333333,30.595 0.00333333333,32.5733333 C-0.0583333333,34.5533333 0.71,36.4916667 2.11,37.89 C3.47,39.2516667 5.27833333,40 7.20166667,40 C9.26666667,40 11.2366667,39.1133333 12.6033333,37.565 L27.1533333,19.5833333 C28.0566667,19.8516667 29.01,20 30,20 C35.5233333,20 40,15.5233333 40,10 C40,8.55166667 39.685,7.18 39.1316667,5.93666667 L33.785,11.285 Z">
+                              </path>
+                            </g>
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                    <span class="ms-1">Paramettres</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  
+      {% if request.user.type == "Passenger" %}
+
+    <!-- Passenger Section Tableau de Bord Trip Reservation-------->
+      <div id="trip_dashboard" class="col-12 mt-4 p-4">
+        <div class="card mb-4">
+          <div class="card-header pb-0 p-3">
+            <h6 class="mb-1">TABLEAU DE BORD DES TRIPS RESERVATION</h6>
+            <p class="text-sm">Ajouter, Modifier ou Supprimer un TRIP</p>
+          </div>
+          <div class="card-body p-4">
+            <div class="row">
+              <!-----------Start of List of reservation---------->
+
+              <!--TRIPS fom Database-->
+              {% if trips %}
+                {% for trip in trips %}
+                  {% if trip.is_confirmed == True %}
+                    <div id="trip-{{ trip.id }}" class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                      <div class="card card-blog card-plain">
+                        
+                        <div class="card-body p-4 shadow-xl text-center border-radius-xl position-relative">
+                          <!-- Statut du trajet et icône de contact alignés horizontalement -->
+                          <div class="d-flex justify-content-center align-items-center mb-4">
+                            <span class="badge bg-gradient-secondary text-white py-2 px-2" style="margin-right: 5%; align-items: self-start;">{{trip.confirmed_price}} TND</span>
+                            <span class="badge bg-success text-white py-2 px-3">Trip Confirmé</span>
+                            <!-- Icône de message pour contact -->
+                            <a href="javascript:;" class="ms-3 text-success" title="Contacter le Chauffeur">
+                              <i class="fa fa-comments fa-lg"></i>
+                            </a>
+                          </div>
+                        
+                          <!-- Image de l'illustration -->
+                          <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl mb-3">
+                        
+                          <!-- Date du trajet -->
+                          <p class="text-gradient text-dark mb-1 text-sm font-weight-bold">{{trip.date|date:"d F Y"}}</p>
+                        
+                          <!-- Lieu de départ et d'arrivée -->
+                          <a href="javascript:;" class="text-decoration-none">
+                            <h5 class="my-3">
+                              {{trip.source}} <i class="fa fa-arrow-right text-success"></i> {{trip.destination}}
+                            </h5>
+                          </a>
+                        
+                          <!-- Heure de départ et d'arrivée -->
+                          <p class="text-secondary mb-2">
+                            Heure Départ: {{trip.confirmed_heure}}
+                          </p>
+                        
+                          <!-- Bouton pour voir les détails -->
+                          <button type="button" class="btn btn-outline-success btn-sm">Voir Trip</button>
+                        </div>
+                        
+                        
+                        
+                      </div>
+                    </div>
+                  {% else %}
+                    <div id="trip-{{ trip.id }}" class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                      <div class="card card-blog card-plain">
+                        
+                        <div class="card-body p-4 shadow-xl text-center border-radius-xl position-relative">
+                          <!-- Statut du trajet et icône de contact alignés horizontalement -->
+                          <div class="d-flex justify-content-center align-items-center mb-4">
+                            <span class="badge bg-gradient-info text-white py-2 px-3">Searching</span>
+                            
+                            <a href="javascript:;" class="ms-3 text-success" title="Contacter le driver">
+                              <i class="fa fa-search fa-lg"></i>
+                            </a>
+                          
+                          </div>
+                        
+                          <!-- Image de l'illustration -->
+                          <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl mb-3">
+                        
+                          <!-- Date du trajet -->
+                          <p class="text-gradient text-dark mb-1 text-sm font-weight-bold">{{trip.date|date:"d F Y"}}</p>
+                        
+                          <!-- Lieu de départ et d'arrivée -->
+                          <a href="javascript:;" class="text-decoration-none">
+                            <h5 class="my-3">
+                              {{trip.source}} <i class="fa fa-arrow-right text-success"></i> {{trip.destination}}
+                            </h5>
+                          </a>
+                        
+                          <!-- Heure de départ -->
+                          <p class="text-secondary mb-2">
+                            Départ: De {{trip.heure_min|time:"H"}}h{{trip.heure_min|time:"i"}} à {{trip.heure_max|time:"H"}}h{{trip.heure_max|time:"i"}}
+                          </p>
+                          <!-- Bouton pour voir les détails -->
+                          <button type="button" class="btn btn-outline-success btn-sm">Voir Trip</button>
+                        </div>
+                        
+                        
+                        
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% else %}  
+                <div id="alert_empty_trip_list" class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                  <div class="card h-100 card-plain border">
+                      <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                          <i class="fa fa-warning text-warning mb-3 fa-3x"></i>
+                          <h6 class="text-secondary">
+                              Vous n'avez pas encore lancé de TRIP.<br>
+                              Pour trouver un covoiturage correspondant à vos besoins,
+                              veuillez créer un TRIP en spécifiant vos critères. <br>
+                              Nous nous occupons du reste.
+                          </h6>
+                      </div>
+                  </div>
+                </div>
+              {% endif %}  
+              <!--END of TRIP from Database-->
+              <!-----------End of List of reservation---------->
+
+              <!-----------Start of Button to add new TRIP---------->
+              {% if trips.count <= 3 %}
+              <div class="col-xl-3 col-md-6 mb-xl-0 mb-4" type="button" data-toggle="modal" data-target="#addTrip" style="cursor: pointer;">
+                <div class="card h-100 card-plain border">
+                  <div class="card-body d-flex flex-column justify-content-center text-center">
+                    <a href="javascript:;">
+                      <i class="fa fa-plus text-success mb-3"></i>
+                      <h5 class=" text-secondary"> Nouvel Trip </h5>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              <!-----------End of Button to add new reservation---------->
+            </div>
+          </div>
+      </div>
+  
+    <!-- Passenger Section Tableau de Bord Trip Reservation-------->
+
+     <!--Tableau de bord des Informations Pour Passagers-->
+
+     <div class="container-fluid py-4">
+
+      <div class="row">
+        <div class="col-12 col-xl-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <h6 class="mb-0">Paramettres des TRIPS Réservations</h6>
+            </div>
+            <div class="card-body p-3">
+                 <!--Mettre à jour le Type de Bagage-->
+              <div class="d-flex align-items-center mt-2">
+                <h6 class="mb-0 text-sm">TYPE DE BAGAGES</h6>
+              </div>
+
+              <form id="bagage-form" method="POST" action="/update-bagage/">
+                {% csrf_token %}
+                <ul class="list-group">
+                    <li class="list-group-item border-0 px-0">
+                        <div class="form-check form-switch ps-0">
+                            <input class="form-check-input ms-auto" type="checkbox" id="bagage_leger" name="bagage" value="Leger" {% if user_bagage == 'Leger' %}checked{% endif %}>
+                            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="bagage_leger">Bagage Leger</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item border-0 px-0">
+                        <div class="form-check form-switch ps-0">
+                            <input class="form-check-input ms-auto" type="checkbox" id="bagage_standard" name="bagage" value="Standard" {% if user_bagage == 'Standard' %}checked{% endif %}>
+                            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="bagage_standard">Bagage Standard</label>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+              <h6 class="text-uppercase text-body text-xs font-weight-bolder mt-4">Marges Acceptables</h6>
+              <ul class="list-group">
+                <li class="list-group-item border-0 px-0">
+                  <div class="form-check form-switch ps-0">
+                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault3">
+                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault3">Prix du trajet +5TND</label>
+                  </div>
+                </li>
+                <li class="list-group-item border-0 px-0">
+                  <div class="form-check form-switch ps-0">
+                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault4" checked>
+                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault4">Heure de Départ +30mn</label>
+                  </div>
+                </li>
+                <li class="list-group-item border-0 px-0 pb-0">
+                  <div class="form-check form-switch ps-0">
+                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault5">
+                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault5">Chauffeurs Mixte</label>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-xl-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <div class="row">
+                <div class="col-md-8 d-flex align-items-center">
+                  <h6 class="mb-0">Informations</h6>
+                </div>
+                <div class="col-md-4 text-end">
+                  <a href="javascript:;">
+                    <i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Profile"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              
+              <hr class="horizontal gray-light my-4">
+              <ul class="list-group">
+                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Nom d'utilisateur:</strong> &nbsp;  {{ request.user.username }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Téléphone:</strong> &nbsp; {{request.user.phone}}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ request.user.email }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Abonnement:</strong> &nbsp; {{user_abonnement.coupon}}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Fin Abonnement:</strong> &nbsp; {{user_abonnement.date_expiration|date:"d F Y"}}</li>
+              
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-xl-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <h6 class="mb-0">Derniers TRIPS lancés</h6>
+            </div>
+            <div class="card-body p-3">
+              <ul class="list-group">
+                <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                  <div class="avatar me-1">
+                    <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl">
+                  </div>
+                  <div class="d-flex align-items-start flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm">Tunis <i class="fa fa-arrow-right text-success"></i> Nabeul</h6>
+                    <p class="mb-0 text-xs">05 Nov 2024</p>
+                    <p class="mb-0 text-xs">Départ: 08h à 09h</p>
+                  </div>
+                  <a class="btn bg-gradient-info  mb-0 ms-auto" href="javascript:;">ReTriper</a>
+                </li>
+    
+              </ul>
+            </div>
+          </div>
+        </div>
+
+       
+
+      </div>
+
+      {% include "includes/footer.html" %}
+
+    </div>
+  <!--Tableau de bord des Informations Pour Passagers-->  
+
+      {% else %}
+
+     <!-- Driver section Tableau de Bord Trajet Reservation-------->
+
+     <div class="col-12 mt-4 p-4">
+      <div class="card mb-4">
+        <div class="card-header pb-0 p-3">
+          <h6 class="mb-1">TABLEAU DE BORD DES TRAJETS</h6>
+          <p class="text-sm">Ajouter, Modifier ou Supprimer un TRAJET</p>
+        </div>
+        <div class="card-body p-4">
+          <div class="row">
+
+            <!-----------Start of List of reservation---------->
+            <!--List from Database -->
+             {% if trajets %}
+                {% for trajet in trajets %}
+                  <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                    <div class="card card-blog card-plain">
+                      
+                      <div class="card-body p-4 shadow-xl text-center border-radius-xl position-relative">
+                        <!-- Statut du trajet et icône de contact alignés horizontalement -->
+                        <div class="d-flex justify-content-center align-items-center mb-4">
+                          <span class="badge bg-gradient-secondary text-white py-2 px-2" style="margin-right: 5%; align-items: self-start;">{{trajet.price_per_seat}} TND</span>
+                          {% if trajet.status == 'Lancé' %}
+                          <span class="badge bg-gradient-secondary text-white py-2 px-3">{{trajet.status}}</span>
+                          {% elif trajet.status == 'Complet' %}
+                          <span class="badge bg-success text-white py-2 px-3">{{trajet.status}}</span>
+                          <!-- Icône de message pour contact -->
+                          <a href="javascript:;" class="ms-3 text-success" title="Contacter le driver">
+                            <i class="fa fa-comments fa-lg"></i>
+                          </a>
+                          {% else %}
+                          <span class="badge bg-gradient-info text-white py-2 px-3">{{trajet.status}}</span>
+                          <!-- Icône de message pour contact -->
+                          <a href="javascript:;" class="ms-3 text-success" title="Contacter le driver">
+                            <i class="fa fa-comments fa-lg"></i>
+                          </a>
+                          {% endif %}
+
+                        </div>
+                      
+                        <!-- Image de l'illustration -->
+                        <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl mb-3">
+                      
+                        <!-- Date du trajet -->
+                        <p class="text-gradient text-dark mb-1 text-sm font-weight-bold">{{ trajet.date|date:"d F Y" }}</p>
+                      
+                        <!-- Lieu de départ et d'arrivée -->
+                        <a href="javascript:;" class="text-decoration-none">
+                          <h5 class="my-3">
+                            {{trajet.source}} <i class="fa fa-arrow-right text-success"></i> {{trajet.destination}}
+                          </h5>
+                        </a>
+                      
+                        <!-- Heure de départ et d'arrivée -->
+                        <p class="text-secondary mb-2">
+                          Heure Départ: {{ trajet.heure|time:"H" }}h{{ trajet.heure|time:"i" }}
+                        </p>
+                      
+                        <!-- Bouton pour voir les détails -->
+                        <button class="btn btn-outline-success btn-sm">Voir Trajet</button>
+                      </div>
+                      
+                      
+                      
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+              <div id="alert_empty_trajet_list" class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                <div class="card h-100 card-plain border">
+                  <div class="card-body d-flex flex-column justify-content-center text-center">
+                    <a>
+                      <i class="fa fa-warning text-warning mb-xl-2"></i>
+                      <h6 class=" text-secondary">Vous n'avez pas encore lancé de Trajet. Pour lancer un Trajet, 
+                        vous avez besoin d'une voiture (voir Dashbord VOITURE).</h6>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              {% endif %}  
+            <!--End of list from Database-->
+            <!-----------End of List of Trajet---------->
+
+            <!-----------Start of Button to add new Trajet---------->
+             {% if trajets.count <= 3 %} 
+            <div id="addTrajetButton" class="col-xl-3 col-md-6 mb-xl-0 mb-4" type="button" data-toggle="modal" data-target="#addTrajet" style="cursor: pointer;">
+              <div class="card h-100 card-plain border">
+                <div class="card-body d-flex flex-column justify-content-center text-center">
+                  <a>
+                    <i class="fa fa-plus text-success mb-3"></i>
+                    <h5 class=" text-secondary"> Nouveau Trajet </h5>
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+                  
+
+            <!-----------End of Button to add new reservation---------->
+          </div>
+        </div>
+     </div>
+
+  <!-- Tableau de Bord Trajet Reservation-------->
+
+
+    <!--Tableau de bord des Informations Pour Drivers-->
+
+    <div class="container-fluid py-4">
+
+      <div class="row">
+        <div class="col-12 col-xl-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <h6 class="mb-0">VOITURE</h6>
+            </div>
+            <div class="card-body p-3 align-items-center">
+              <ul id="carDashboard" class="list-group">
+                {% if cars  %}
+                  {% for car in cars %}
+                  <li class="list-group-item border-1 d-flex align-items-center px-0 mb-2 shadow-xl">
+                    <div class="avatar me-1">
+                      <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl">
+                    </div>
+                    <div class="d-flex align-items-start flex-column justify-content-center">
+                      <h6 class="mb-0 text-sm">{{car.car_marque}}: {{car.car_matricule}}</h6>
+                      <h5 class="mb-0 text-sm">Nombre de Place: {{car.car_nombre_place}}</h5>
+                    </div>
+                  </li>
+                  {% endfor %}
+                {% else %}  
+                  <div id="car_empty" class="d-flex align-items-start flex-column justify-content-center">
+                    <p class="mb-0 text-sm p-4 text-white">Vous n'avez pas encore ajouter de voiture. Pour lancer un Trajet, vous devez disposer d'une voiture.</p>
+                  </div>
+                {% endif %}
+                
+              </ul>
+              {% if cars.count == 0 %}
+              <div style="align-items: center;">
+                <button class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#addCar" >Ajouter une Voiture</button>
+              </div>
+              {% endif %}
+              <!--Mettre à jour le Type de Bagage-->
+              <div class="d-flex align-items-center mt-2">
+                <h6 class="mb-0 text-sm">PARAMETRES BAGAGES</h6>
+              </div>
+
+              <form id="bagage-form" method="POST" action="/update-bagage/">
+                {% csrf_token %}
+                <ul class="list-group">
+                    <li class="list-group-item border-0 px-0">
+                        <div class="form-check form-switch ps-0">
+                            <input class="form-check-input ms-auto" type="checkbox" id="bagage_leger" name="bagage" value="Leger" {% if user_bagage == 'Leger' %}checked{% endif %}>
+                            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="bagage_leger">Bagage Leger</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item border-0 px-0">
+                        <div class="form-check form-switch ps-0">
+                            <input class="form-check-input ms-auto" type="checkbox" id="bagage_standard" name="bagage" value="Standard" {% if user_bagage == 'Standard' %}checked{% endif %}>
+                            <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="bagage_standard">Bagage Standard</label>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+            
+            
+                       
+              <!--Fin Mettre à jour le Type de Bagage-->
+              
+
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-xl-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <div class="row">
+                <div class="col-md-8 d-flex align-items-center text-center">
+                  <h6 class="mb-0 text-center">INFORMATIONS</h6>
+                </div>
+                <div class="col-md-4 text-end">
+                  <a href="javascript:;">
+                    <i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Profile"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              
+              <ul class="list-group">
+                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Nom d'utilisateur:</strong> &nbsp;  {{ request.user.username }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Téléphone:</strong> &nbsp; {{request.user.phone}}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Whatsapp:</strong> &nbsp; {{request.user.whatsapp}}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ request.user.email }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Abonnement:</strong> &nbsp; GRATUIT</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Fin Abonnement:</strong> &nbsp; 25 Décembre 2024</li>
+              
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-xl-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <h6 class="mb-0 text-center">DERNIERS TRAJETS LANCES</h6>
+            </div>
+            <div class="card-body p-3">
+              <ul class="list-group">
+                <li class="list-group-item border-1 d-flex align-items-center px-0 mb-2 shadow-xl">
+                  <div class="avatar me-1">
+                    <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl">
+                  </div>
+                  <div class="d-flex align-items-start flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm">Tunis <i class="fa fa-arrow-right text-success"></i> Nabeul</h6>
+                    <p class="mb-0 text-xs">05 Nov 2024</p>
+                    <p class="mb-0 text-xs">Départ: 08h à 09h</p>
+                  </div>
+                  <a class="btn bg-gradient-info  mb-0 ms-auto" data-toggle="modal" data-target="#chatModal" href="javascript:;">ReLancer</a>
+                </li>
+    
+              </ul>
+            </div>
+          </div>
+        </div>
+  
+       
+  
+      </div>
+
+          
+  
+      {% include "includes/footer.html" %}
+  
+    </div>
+  <!--Tableau de bord des Informations Pour Driver-->  
+
+  {% endif %}
+
+
+<!-- Modal Chat -->
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h6 class="modal-title" >DEPART: Tunis</h6>
+              <h6 class="modal-title" >ARRIVEE: Nabeul</h6>
+              <p class="modal-title" id="chatModalLabel">20 Novembre 2024 à 13H30MN</p>
+              <button type="button" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <!-- Messages -->
+              <div class="chat-box" id="chatBox">
+                  <!-- Message du Chauffeur -->
+                  <div class="message driver">
+                      <div class="message-content">
+                          <strong>Chauffeur:</strong> Bonjour à tous, je suis le chauffeur. Nous allons commencer notre trajet dans 10 minutes.
+                      </div>
+                  </div>
+                  <!-- Message d'un Passager -->
+                  <div class="message passenger">
+                      <div class="message-content">
+                          <strong>Passager 1:</strong> Super, merci pour l'info ! Est-ce que je dois encore confirmer mon emplacement ?
+                      </div>
+                  </div>
+                  <!-- Message du Chauffeur -->
+                  <div class="message driver">
+                      <div class="message-content">
+                          <strong>Chauffeur:</strong> Non, tout est bon. Je vais récupérer les passagers à leur emplacement prévu.
+                      </div>
+                  </div>
+                  <!-- Message d'un Passager -->
+                  <div class="message passenger">
+                      <div class="message-content">
+                          <strong>Passager 2:</strong> D'accord, je vous attendrai à l'endroit indiqué.
+                      </div>
+                  </div>
+              </div>
+              <!-- Zone de saisie des messages -->
+              <div class="input-group">
+                  <input type="text" id="messageInput" style="height: 20%;" class="form-control" placeholder="Entrez votre message...">
+                  
+                  <button class="btn btn-primary" style="margin-left: 5px;" id="sendMessageBtn">Envoyer</button>
+                  
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+ <!--Modal Ajout de Voiture pour Driver-->
+
+ <div id="addCar" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ajoutdeCar" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="pcoded-content">
+        <!-- Formulaire -->
+        <form name="form_add_car" method="post" id="form_add_car" data-url="{% url 'add_car_ajax' %}">
+          {% csrf_token %}
+          <!-- Matricule Input -->
+          <div class="d-flex align-items-center" style="margin: 10px;">
+            <div class="input-group" style="margin-left: 5px;">
+              <span class="input-group-text text-white bg-gradient-info" id="basic-addon1" style="width: 20%;">MATRICULE</span>
+              <input name="matricule" type="text" class="form-control bg-dark text-center" placeholder="Matricule" aria-describedby="basic-addon1" required>
+            </div>
+          </div>
+
+          <!-- Marque Input -->
+          <div class="d-flex align-items-center" style="margin: 10px;">
+            <div class="input-group" style="margin-left: 5px;">
+              <span class="input-group-text text-white bg-gradient-info" id="basic-addon1" style="width: 20%;">MARQUE</span>
+              <input name="marque" type="text" class="form-control bg-dark text-center" placeholder="Marque de la voiture" aria-describedby="basic-addon1" required>
+            </div>
+          </div>
+
+          <!-- Modele Input -->
+          <div class="d-flex align-items-center" style="margin: 10px;">
+            <div class="input-group" style="margin-left: 5px;">
+              <span class="input-group-text text-white bg-gradient-info" id="basic-addon1" style="width: 20%;">MODELE</span>
+              <input name="modele" type="text" class="form-control bg-dark text-center" placeholder="Modele de la voiture" aria-describedby="basic-addon1" required>
+            </div>
+          </div>
+
+          <!-- Nombre de place Input -->
+          <div class="d-flex align-items-center" style="margin: 10px;">
+            <div class="input-group" style="margin-left: 5px;">
+              <span class="input-group-text text-white bg-gradient-info" id="basic-addon1" style="width: 20%;">PLACES</span>
+              <input name="place" type="number" class="form-control bg-dark text-center" min="0" placeholder="Nombre de Place" aria-describedby="basic-addon1" required>
+            </div>
+          </div>
+
+          <!-- Age de la Voiture Input -->
+          <div class="d-flex align-items-center" style="margin: 10px;">
+            <div class="input-group" style="margin-left: 5px;">
+              <span class="input-group-text text-white bg-gradient-info" id="basic-addon1" style="width: 20%;">AGE</span>
+              <input name="age" type="number" class="form-control bg-dark text-center" min="0" placeholder="Age de la voiture" aria-describedby="basic-addon1" required>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn bg-success text-white">Ajouter</button>
+          </div>
+        </form>
+        
+        <!-- Animation de Chargement -->
+        <div id="loading" class="d-none text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2">Ajout en cours...</p>
+        </div>
+
+        <!-- Confirmation de Succès -->
+        <div id="success" class="d-none text-center">
+          <div class="text-success">
+            <i class="fa fa-check-circle" style="font-size: 4rem;"></i>
+          </div>
+          <p class="mt-2">Voiture ajoutée avec succès !</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Fin Modal de Ajout de Voiture-->
+
+
+<!--Modal Creation de Trajet-->
+<div id="addTrajet" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="pcoded-content">
+              {% if no_car %}
+
+                <div id="alert_empty_cars_list" class="alert bg-dark mt-3 mx-3">
+                    <h6 class="text-center text-white">Vous devez ajouter une voiture avant de pouvoir lancer un trajet.</h6>
+              
+                      <button class="btn bg-success text-white" data-toggle="modal" data-target="#addCar" >Ajouter une Voiture</button>
+                    
+                </div>
+                
+              {% else %}
+
+              <form id="form_add_trajet" method="post" data-url="{% url 'add_trajet_ajax' %}">
+
+                  {% csrf_token %}
+                  <!-- Source Selection -->                      
+                    <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Départ <i class="fa fa-map-marker-alt"></i></span>
+                        <div class="custom-select-container bg-light">
+                        <select name="source" id="source" class="form-control" style="margin-left: 5px;" onchange="updateDestinationOptions()">
+                          <option value="">Ville de départ</option>
+                          <option value="Tunis">Tunis</option>
+                          <option value="Nabeul">Nabeul</option>
+                          <option value="Sfax">Sfax</option>
+                          <option value="Bizerte">Bizerte</option>
+                          <option value="Sousse">Sousse</option>
+                        </select>
+                        </div>
+                     </div>             
+                  <!-- Destination Selection -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Arrivé <i class="fa fa-map-marker-alt"></i></span>
+                      <div class="custom-select-container">
+                      <select name="destination" id="destination" class="form-control bg-light custom-select" style="margin-left: 5px;" onchange="updateSourceOptions()">
+                          <option value="">Ville d'arrivée</option>
+                          <option value="Tunis">Tunis</option>
+                          <option value="Nabeul">Nabeul</option>
+                          <option value="Sfax">Sfax</option>
+                          <option value="Bizerte">Bizerte</option>
+                          <option value="Sousse">Sousse</option>
+                      </select>
+                      </div>
+                  </div>
+
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Passagers <i class="fa fa-users"></i></span>
+                    
+                    <!-- Champ de sélection pour le genre -->
+                    <div class="custom-select-container">
+                      <select name="passagers" class="form-control bg-light custom-select" style="margin-left: 5px;">
+                          <option value="homme">Homme</option>
+                          <option value="femme">Femme</option>
+                          <option value="mixte" selected>Mixte</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Price Input -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Prix <i class="fa fa-money-bill"></i></span>
+                    
+                    <!-- Champ de saisie du prix avec une devise (CFA, EUR,TND ou autre) -->
+                    <div class="input-group" style="margin-left: 5px;">
+                        <span class="input-group-text" id="basic-addon1" style="min-width: 50px;">TND</span>
+                        <input name="prix" type="number" class="form-control bg-dark text-center" min="0" placeholder=" Prix" aria-describedby="basic-addon1" step="1" oninput="formatPrice(this)">
+                    </div>
+                  </div>
+
+                  <!-- Nombre de places -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Places <i class="fa fa-users"></i></span>
+                    <div class="custom-select-container">
+                        <select name="nombre_places" class="form-control bg-light custom-select" style="margin-left: 5px;">
+                            
+                            {% for i in place_options %}
+                            <option value="{{ i }}" {% if i == place_options|last %}selected{% endif %}>{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+
+
+                  <!-- Date Input -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 120px; display: inline-block;">Date <i class="fa fa-calendar"></i></span>
+                    
+                    <!-- Sélection du jour -->
+                    <select id="jour" name="jour" class="form-control" style="width: 80px; margin-right: 5px;">
+                        <option value="" disabled selected>JJ</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                        <option value="31">31</option>
+                    </select>
+                    
+                    <!-- Sélection du mois -->
+                    <select id="mois" name="mois" class="form-control" style="width: 100px; margin-right: 5px;">
+                        <option value="" disabled selected>MM</option>
+                        <option value="01">Jan</option>
+                        <option value="02">Feb</option>
+                        <option value="03">Mar</option>
+                        <option value="04">Apr</option>
+                        <option value="05">May</option>
+                        <option value="06">Jun</option>
+                        <option value="07">Jul</option>
+                        <option value="08">Aug</option>
+                        <option value="09">Sep</option>
+                        <option value="10">Oct</option>
+                        <option value="11">Nov</option>
+                        <option value="12">Dec</option>
+                    </select>
+                
+                    <!-- Sélection de l'année -->
+                    <select id="annee" name="annee" class="form-control" style="width: 100px;">
+                        <option value="" disabled selected>YYYY</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                        <option value="2030">2030</option>
+                    </select>
+                </div>
+
+                  <!-- Heure Input -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 120px; display: inline-block;">Heure <i class="fa fa-clock"></i></span>
+                    
+                    <!-- Sélection de l'heure -->
+                    <select name="heure" class="form-control" style="width: 80px; margin-right: 5px;">
+                        <option value="" disabled selected>HH</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                    </select>
+                    
+                    <!-- Sélection des minutes -->
+                    <select name="minute" class="form-control" style="width: 80px;">
+                        <option value="" disabled selected>MM</option>
+                        <option value="00">00</option>
+                        <option value="05">05</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="35">35</option>
+                        <option value="40">40</option>
+                        <option value="45">45</option>
+                        <option value="50">50</option>
+                        <option value="55">55</option>
+                    </select>
+                </div>
+                
+              
+                  <!-- Modal Footer -->
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                      <button type="submit" class="btn bg-success text-white">Lancer</button>
+                  </div> 
+
+              </form>
+
+                   <!-- Animation de Chargement -->
+                   <div id="loading_trajet" class="d-none text-center">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-success">Ajout en cours...</p>
+                  </div>
+
+                  <!-- Confirmation de Succès -->
+                  <div id="success_trajet" class="d-none text-center">
+                    <div class="text-success">
+                      <i class="fa fa-check-circle" style="font-size: 4rem;"></i>
+                    </div>
+                    <p class="mt-2 text-success">Trajet ajouté avec succès !</p>
+                  </div>
+              
+              {% endif %} 
+          </div>
+      </div>
+  </div>
+</div>
+<!--Fin Modal de Creation de Trajet-->
+
+
+ <!--Modal Creation de Trip-->
+ <div id="addTrip" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="NouvelleTrip" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="pcoded-content">
+
+              {% if not abonnement %}
+               <!--A remplacer pour checker la periode d'abonnement du passager-->
+                  <div id="abonnement_check" class="alert bg-gradient-info mt-3 mx-3 rounded shadow">
+                    <h5 class="text-center text-white font-weight-bold mb-3">
+                        Votre abonnement a expiré. Veuillez vous réabonner pour pouvoir créer de nouveaux TRIPS.
+                    </h5>
+                    <div class="text-center">
+                        <button class="btn bg-success text-white px-4 py-3" data-toggle="modal" data-target="#addAbonnement">
+                            Abonnement
+                        </button>
+                    </div>
+                  </div> 
+
+              {% else %}
+
+              <form name="form_add_trip" method="post" id="form_add_trip" data-url="{% url 'add_trip_ajax' %}">
+                  {% csrf_token %}               
+                  <!-- Source Selection -->                                   
+                    <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Départ <i class="fa fa-map-marker-alt"></i></span>
+                        <div class="custom-select-container bg-light">
+                        <select name="source" id="source" class="form-control" style="margin-left: 5px;" onchange="updateDestinationOptions()">
+                          <option value="">Ville de départ</option>
+                          <option value="Tunis">Tunis</option>
+                          <option value="Nabeul">Nabeul</option>
+                          <option value="Sfax">Sfax</option>
+                          <option value="Bizerte">Bizerte</option>
+                          <option value="Sousse">Sousse</option>
+                        </select>
+                        </div>
+                     </div>               
+                  <!-- Destination Selection -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Arrivé <i class="fa fa-map-marker-alt"></i></span>
+                      <div class="custom-select-container">
+                      <select name="destination" id="destination" class="form-control bg-light custom-select" style="margin-left: 5px;" onchange="updateSourceOptions()">
+                          <option value="">Ville d'arrivée</option>
+                          <option value="Tunis">Tunis</option>
+                          <option value="Nabeul">Nabeul</option>
+                          <option value="Sfax">Sfax</option>
+                          <option value="Bizerte">Bizerte</option>
+                          <option value="Sousse">Sousse</option>
+                      </select>
+                      </div>
+                  </div>
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Chauffeur <i class="fa fa-car"></i></span>                                      
+                    <!-- Champ de sélection pour le genre du Chauffeur -->
+                    <div class="custom-select-container">
+                      <select name="driver" class="form-control bg-light custom-select" style="margin-left: 5px;">
+                          <option value="homme">Homme</option>
+                          <option value="femme">Femme</option>
+                          <option value="mixte" selected>Tout genre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- Price Input -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Prix max <i class="fa fa-money-bill"></i></span>                                     
+                    <!-- Champ de saisie du prix avec une devise (CFA, EUR,TND ou autre) -->
+                    <div class="input-group" style="margin-left: 5px;">
+                        <span class="input-group-text" id="basic-addon1" style="min-width: 50px;">TND</span>
+                        <input name="prix" type="number" class="form-control bg-dark text-center" min="0" placeholder=" Prix" aria-describedby="basic-addon1" step="1" oninput="formatPrice(this)">
+                    </div>
+                  </div>               
+                  <!-- Date Input -->
+                  <div class="d-flex align-items-center" style="margin: 10px;">
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 120px; display: inline-block;">Date <i class="fa fa-calendar"></i></span>                                     
+                    <!-- Sélection du jour -->
+                    <select id="jour" name="jour" class="form-control" style="width: 80px; margin-right: 5px;">
+                        <option value="" disabled selected>JJ</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                        <option value="31">31</option>
+                    </select>                                     
+                    <!-- Sélection du mois -->
+                    <select id="mois" name="mois" class="form-control" style="width: 100px; margin-right: 5px;">
+                        <option value="" disabled selected>MM</option>
+                        <option value="01">Jan</option>
+                        <option value="02">Feb</option>
+                        <option value="03">Mar</option>
+                        <option value="04">Apr</option>
+                        <option value="05">May</option>
+                        <option value="06">Jun</option>
+                        <option value="07">Jul</option>
+                        <option value="08">Aug</option>
+                        <option value="09">Sep</option>
+                        <option value="10">Oct</option>
+                        <option value="11">Nov</option>
+                        <option value="12">Dec</option>
+                    </select>                                 
+                    <!-- Sélection de l'année -->
+                    <select id="annee" name="annee" class="form-control" style="width: 100px;">
+                        <option value="" disabled selected>YYYY</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                        <option value="2030">2030</option>
+                    </select>
+                </div>
+                <!-- Heure Interval Input -->                                 
+                <div class="d-flex align-items-center" style="margin: 10px;">
+                  <!-- Label -->
+                  <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 160px;">
+                      Heure Départ: <i class="fa fa-clock"></i>
+                  </span>
+                  <!-- Séparateur -->
+                  <span class="mx-2 text-secondary text-center">De</span>                                
+                  <!-- Sélection Heure Début -->
+                  <select id="heure_min" name="heure_min" class="form-control me-2" style="width: 120px;">
+                      <option value="" disabled selected>HH</option>
+                      <option value="00">00h00</option>
+                      <option value="01">01h00</option>
+                      <option value="02">02h00</option>
+                      <option value="03">03h00</option>
+                      <option value="04">04h00</option>
+                      <option value="05">05h00</option>
+                      <option value="06">06h00</option>
+                      <option value="07">07h00</option>
+                      <option value="08">08h00</option>
+                      <option value="09">09h00</option>
+                      <option value="10">10h00</option>
+                      <option value="11">11h00</option>
+                      <option value="12">12h00</option>
+                      <option value="13">13h00</option>
+                      <option value="14">14h00</option>
+                      <option value="15">15h00</option>
+                      <option value="16">16h00</option>
+                      <option value="17">17h00</option>
+                      <option value="18">18h00</option>
+                      <option value="19">19h00</option>
+                      <option value="20">20h00</option>
+                      <option value="21">21h00</option>
+                      <option value="22">22h00</option>
+                      <option value="23">23h00</option>
+                  </select>                               
+                  <!-- Séparateur -->
+                  <span class="mx-2 text-secondary text-center">à</span>                               
+                  <!-- Sélection Heure Fin -->
+                  <select id="heure_max" name="heure_max" class="form-control" style="width: 120px;">
+                      <option value="" disabled selected>HH</option>
+                      <option value="01">01h00</option>
+                      <option value="02">02h00</option>
+                      <option value="03">03h00</option>
+                      <option value="04">04h00</option>
+                      <option value="05">05h00</option>
+                      <option value="06">06h00</option>
+                      <option value="07">07h00</option>
+                      <option value="08">08h00</option>
+                      <option value="09">09h00</option>
+                      <option value="10">10h00</option>
+                      <option value="11">11h00</option>
+                      <option value="12">12h00</option>
+                      <option value="13">13h00</option>
+                      <option value="14">14h00</option>
+                      <option value="15">15h00</option>
+                      <option value="16">16h00</option>
+                      <option value="17">17h00</option>
+                      <option value="18">18h00</option>
+                      <option value="19">19h00</option>
+                      <option value="20">20h00</option>
+                      <option value="21">21h00</option>
+                      <option value="22">22h00</option>
+                      <option value="23">23h00</option>
+                  </select>
+              </div>                          
+              <!-- Modal Footer -->
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                      <button type="submit" class="btn bg-success text-white">Lancer</button>
+                  </div>
+              </form>
+               <!-- Animation de Chargement -->
+              <div id="loading_trip" class="d-none text-center">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-secondary">Ajout en cours...</p>
+              </div>
+
+              <!-- Confirmation de Succès -->
+              <div id="success_trip" class="d-none text-center">
+                
+                <div class="text-success">
+                  <i class="fa fa-check-circle" style="font-size: 4rem;"></i>
+                </div>
+                <p class="mt-2 text-success">Trip ajouté avec succès !</p>
+              </div>
+              {% endif %}  
+          </div>
+      </div>
+  </div>
+</div>
+<!--Fin Modal de Creation de Trip-->
+
+ 
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery (required for Bootstrap's JavaScript) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+</script>
+<script>
+  const socket = new WebSocket('ws://localhost:8000/ws/trips/');
+
+  socket.onmessage = function(event) {
+      console.log("Message reçu :", event.data);
+      const data = JSON.parse(event.data);
+
+      // Exemple : Mettre à jour un trajet spécifique
+      const tripElement = document.getElementById(`trip-${data.id}`);
+      if (tripElement) {
+          tripElement.querySelector('.badge').innerText = data.is_confirmed ? "Trip Confirmé" : "Searching";
+          tripElement.querySelector('.price').innerText = `${data.confirmed_price} TND`;
+          tripElement.querySelector('.date').innerText = data.date;
+      } else {
+          // Ajoutez une logique pour ajouter un nouveau trajet si nécessaire
+      }
+  };
+</script>
+
+
+{% endblock javascripts %}
