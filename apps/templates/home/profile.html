@@ -164,7 +164,7 @@ input:checked + .slider::before {
 
 {% block content %}
 
-    <div class="container-fluid">
+   
 
       <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('{{ ASSETS_ROOT }}/img/curved-images/WASSELNI.png'); background-position-y: 50%;">
         <span class="mask bg-gradient-info opacity-6"></span>
@@ -1358,22 +1358,34 @@ input:checked + .slider::before {
 
 </script>
 <script>
-  const socket = new WebSocket('ws://localhost:8000/ws/trips/');
+const socket = new WebSocket('ws://18.205.117.236:8000/ws/trips/');
+socket.onopen = function() {
+    console.log("WebSocket is connected.");
+};
 
-  socket.onmessage = function(event) {
-      console.log("Message reçu :", event.data);
-      const data = JSON.parse(event.data);
+socket.onmessage = function(event) {
+    console.log("Message received:", event.data);
+    const data = JSON.parse(event.data);
 
-      // Exemple : Mettre à jour un trajet spécifique
-      const tripElement = document.getElementById(`trip-${data.id}`);
-      if (tripElement) {
-          tripElement.querySelector('.badge').innerText = data.is_confirmed ? "Trip Confirmé" : "Searching";
-          tripElement.querySelector('.price').innerText = `${data.confirmed_price} TND`;
-          tripElement.querySelector('.date').innerText = data.date;
-      } else {
-          // Ajoutez une logique pour ajouter un nouveau trajet si nécessaire
-      }
-  };
+    // Example: Update trip information in the UI
+    const tripElement = document.getElementById(`trip-${data.id}`);
+    if (tripElement) {
+        tripElement.querySelector('.badge').innerText = data.is_confirmed ? "Confirmed" : "Searching";
+        tripElement.querySelector('.price').innerText = `${data.confirmed_price} TND`;
+        tripElement.querySelector('.heure').innerText = data.confirmed_heure;
+    } else {
+        // Logic to add a new trip if necessary
+    }
+};
+
+socket.onerror = function(error) {
+    console.error("WebSocket Error:", error);
+};
+
+socket.onclose = function() {
+    console.log("WebSocket connection closed.");
+};
+
 </script>
 
 

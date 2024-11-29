@@ -1,3 +1,7 @@
+# -*- encoding: utf-8 -*-
+"""
+Copyright (c) 2019 - present AppSeed.us
+"""
 
 import os, environ
 
@@ -87,7 +91,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts":AsyncWebSocketConsumer [("127.0.0.1", 6379)],
         },
     },
 }
