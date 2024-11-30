@@ -1362,6 +1362,9 @@ input:checked + .slider::before {
 <script>
 const socket = new WebSocket('ws://18.205.117.236:8000/ws/trips/');
 const notificationSound = new Audio('apps/static/assets/notification.mp3');
+notificationSound.oncanplaythrough = () => {
+    console.log("Audio chargé et prêt à être joué.");
+};
 
 socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
@@ -1408,7 +1411,7 @@ socket.onmessage = function(event) {
         const priceElement = tripElement.querySelector('.confirmed-price');
 	const buttonElement = tripElement.querySelector('.modified_button');
 	const searchIcon = tripElement.querySelector('.fa-search');
-	const openChat = tripElement.querySelector('open_chat');
+	const openChat = tripElement.querySelector('.open_chat');
         if (priceElement) {
             priceElement.textContent = `${data.confirmed_price} TND`;
 	    buttonElement.classList.add('d-none');
