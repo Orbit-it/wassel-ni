@@ -334,7 +334,7 @@ input:checked + .slider::before {
      				 </p>
 
      					 <!-- Prix confirmé -->
-     				 <span class="btn-outline-success text-white confirmed-price"></span>
+     				 <button class="btn btn-outline-success text-white confirmed-price d-none"></button>
 
      					 <!-- Bouton -->
      				 <button type="button" class="btn btn-outline-success btn-sm modified_button">Modifier</button>
@@ -1361,7 +1361,7 @@ input:checked + .slider::before {
 </script>
 <script>
 const socket = new WebSocket('ws://18.205.117.236:8000/ws/trips/');
-const notificationSound = new Audio('apps/static/assets/notification.mp3');
+const notificationSound = new Audio('./static/assets/notification.mp3');
 notificationSound.oncanplaythrough = () => {
     console.log("Audio chargé et prêt à être joué.");
 };
@@ -1413,6 +1413,7 @@ socket.onmessage = function(event) {
 	const searchIcon = tripElement.querySelector('.fa-search');
 	const openChat = tripElement.querySelector('.open_chat');
         if (priceElement) {
+	    priceElement.classList.remove('.d-none');
             priceElement.textContent = `${data.confirmed_price} TND`;
 	    buttonElement.classList.add('d-none');
 	    searchIcon.classList.add('d-none');
