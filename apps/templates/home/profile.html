@@ -1376,7 +1376,7 @@ socket.onmessage = function(event) {
 
         // Add a new notification to the dropdown
         const notificationDropdown = document.querySelector('#notification-dropdown');
-        const newNotification = document.createElement('li');
+        const newNotification = document.createElement('a');
         newNotification.className = 'dropdown-item border-radius-md';
         newNotification.href = 'javascript:;';
         newNotification.innerHTML = `
@@ -1384,7 +1384,7 @@ socket.onmessage = function(event) {
 	                <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
                           <i class="fa fa-handshak me-1"></i>
                         </div>
-                <div class="d-flex flex-column justify-content-center">
+                   <div class="d-flex flex-column justify-content-center">
                     <h6 class="text-sm font-weight-normal mb-1">
                         Trip Confirmé: Trip_id: ${data.trip_id}
                     </h6>
