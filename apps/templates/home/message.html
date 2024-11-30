@@ -1,0 +1,273 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Tables {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+<style>
+ /* Styles généraux du header du modal */
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #47b8e5; /* Couleur de fond douce */
+    border-bottom: 2px solid #363a3e; /* Bordure subtile pour délimiter la section */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Style du bouton de fermeture */
+
+.chat-box {
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: #e5ddd5; /* Couleur de fond neutre */
+}
+
+/* Style des messages */
+.chat-box .message {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-box .message-content {
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 80%;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Message du passager (aligné à gauche) */
+.chat-box .message.passenger {
+    align-items: flex-start;
+}
+
+.chat-box .message.passenger .message-content {
+    background-color: #d1e7dd;
+    color: #000;
+    margin-right: auto; /* Pour aligner à gauche */
+    border-radius: 20px 20px 0 20px; /* Coin arrondi à droite */
+}
+
+/* Message du chauffeur (aligné à droite) */
+.chat-box .message.driver {
+    align-items: flex-end;
+}
+
+.chat-box .message.driver .message-content {
+    background-color: #c3e6cb;
+    color: #000;
+    margin-left: auto; /* Pour aligner à droite */
+    border-radius: 20px 20px 20px 0; /* Coin arrondi à gauche */
+}
+
+/* Style de la zone de saisie des messages */
+
+/* Style du bouton d'envoi */
+#sendMessageBtn {
+    
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Style pour rendre le bouton désactivé si le champ est vide */
+#sendMessageBtn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+.modal {
+    overflow-y: auto; /* Scroll uniquement dans le modal */
+    max-height: 90vh; /* Limiter la hauteur pour garder un espace visible */
+}
+
+.modal-open {
+    overflow: hidden; /* Empêche le scroll de la page lorsqu'un modal est ouvert */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+    margin-right: 10px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 25px;
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #28a745;
+}
+
+input:checked + .slider::before {
+    transform: translateX(25px);
+}
+
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="container-fluid py-4">
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6> LISTE DES MESSAGES </h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">TRAJETS</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">DATE DE DEPART</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">HEURE DE DEPART</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" class="avatar avatar-sm me-3" alt="wasselni">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">Tunis <i class="fa fa-arrow-right text-success"></i> Nabeul</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">01 Decembre 2024</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <p class="text-xs font-weight-bold mb-0">08h00</p>
+                      </td>
+                      
+                      <td class="align-middle text-center">
+                        <a class="btn bg-gradient-success" data-id="3" data-toggle="modal" data-target="#message" >OUVRIR</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+       <!-- Modal Chat -->
+     <div class="modal fade" id="message" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content"> 
+                <div class="modal-header">            
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="d-flex align-items-center">
+                            <h6 class="mb-0">Tunis <i class="fa fa-arrow-right text-success"></i> Nabeul</h6>
+                          </div>
+                        <div class="d-flex align-items-center mt-2">
+                            <!-- Icône de date et heure -->
+                            <i class="fa fa-clock fa-lg"></i>
+                            <p class="modal-title mb-0" id="chatModalLabel">Départ: 20 Novembre 2024 à 13H30MN</p>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="modal-body">
+                    <!-- Messages -->
+                    <div class="chat-box" id="chatBox">
+                        <!-- Message du Chauffeur -->
+                        <div class="message driver">
+                            <div class="message-content">
+                                <strong>Chauffeur:</strong> Bonjour à tous, je suis le chauffeur. Nous allons commencer notre trajet dans 10 minutes.
+                            </div>
+                        </div>
+                        <!-- Message d'un Passager -->
+                        <div class="message passenger">
+                            <div class="message-content">
+                                <strong>Passager 1:</strong> Super, merci pour l'info ! Est-ce que je dois encore confirmer mon emplacement ?
+                            </div>
+                        </div>
+                        <!-- Message du Chauffeur -->
+                        <div class="message driver">
+                            <div class="message-content">
+                                <strong>Chauffeur:</strong> Non, tout est bon. Je vais récupérer les passagers à leur emplacement prévu.
+                            </div>
+                        </div>
+                        <!-- Message d'un Passager -->
+                        <div class="message passenger">
+                            <div class="message-content">
+                                <strong>Passager 2:</strong> D'accord, je vous attendrai à l'endroit indiqué.
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Zone de saisie des messages -->
+                    <div class="input-group">
+                        <input type="text" id="messageInput" style="height: 20%;" class="form-control" placeholder="Entrez votre message...">
+                        
+                        <button class="btn btn-primary" style="margin-left: 5px;" id="sendMessageBtn">Envoyer</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    
+
+{% include "includes/footer.html" %}
+    
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery (required for Bootstrap's JavaScript) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock javascripts %}
