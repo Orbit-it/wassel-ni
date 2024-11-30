@@ -301,45 +301,44 @@ input:checked + .slider::before {
                       </div>
                     </div>
                   {% else %}
-                    <div id="trip-{{ trip.id }}" class="col-xl-3 col-md-6 mb-xl-0 mb-4">
-                      <div class="card card-blog card-plain">
-                        
-                        <div class="card-body p-4 shadow-xl text-center border-radius-xl position-relative">
-                          <!-- Statut du trajet et icône de contact alignés horizontalement -->
-                          <div class="d-flex justify-content-center align-items-center mb-4">
-                            <span class="badge bg-gradient-info text-white py-2 px-3">Searching</span>
-                            
-                            <a href="javascript:;" class="ms-3 text-success" title="Contacter le driver">
-                              <i class="fa fa-search fa-lg"></i>
-                            </a>
-                          
-                          </div>
-                        
-                          <!-- Image de l'illustration -->
-                          <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl mb-3">
-                        
-                          <!-- Date du trajet -->
-                          <p class="text-gradient text-dark mb-1 text-sm font-weight-bold">{{trip.date|date:"d F Y"}}</p>
-                        
-                          <!-- Lieu de départ et d'arrivée -->
-                          <a href="javascript:;" class="text-decoration-none">
-                            <h5 class="my-3">
-                              {{trip.source}} <i class="fa fa-arrow-right text-success"></i> {{trip.destination}}
-                            </h5>
-                          </a>
-                        
-                          <!-- Heure de départ -->
-                          <p class="text-secondary mb-2">
-                            Départ: De {{trip.heure_min|time:"H"}}h{{trip.heure_min|time:"i"}} à {{trip.heure_max|time:"H"}}h{{trip.heure_max|time:"i"}}
-                          </p>
-                          <!-- Bouton pour voir les détails -->
-                          <button type="button" class="btn btn-outline-success btn-sm">Voir Trip</button>
-                        </div>
-                        
-                        
-                        
-                      </div>
-                    </div>
+                  	<div id="trip-{{ trip.id }}" class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+			  <div class="card card-blog card-plain">
+   				 <div class="card-body p-4 shadow-xl text-center border-radius-xl position-relative">
+     					 <!-- Badge de statut -->
+    				  <div class="d-flex justify-content-center align-items-center mb-4">
+  			 	   <span class="badge bg-gradient-info text-white py-2 px-3">Searching</span>
+       					 <a href="javascript:;" class="ms-3 text-success" title="Contacter le driver">
+        							  <i class="fa fa-search fa-lg"></i>
+       					 </a>
+     				 </div>
+
+     					 <!-- Image -->
+     				 <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" alt="Illustration" class="img-fluid border-radius-xl mb-3">
+
+     					 <!-- Date -->
+     				 <p class="text-gradient text-dark mb-1 text-sm font-weight-bold">{{ trip.date|date:"d F Y" }}</p>
+
+     					 <!-- Source et destination -->
+     				 <a href="javascript:;" class="text-decoration-none">
+       				 <h5 class="my-3">
+         			 {{ trip.source }} <i class="fa fa-arrow-right text-success"></i> {{ trip.destination }}
+       				 </h5>
+     				 </a>
+
+     					 <!-- Heure -->
+     				 <p class="text-secondary mb-2 confirmed-heure">
+       				 Départ: De {{ trip.heure_min|time:"H:i" }} à {{ trip.heure_max|time:"H:i" }}
+     				 </p>
+
+     					 <!-- Prix confirmé -->
+     				 <p class="btn-outline-success text-white confirmed-price"></p>
+
+     					 <!-- Bouton -->
+     				 <button type="button" class="btn btn-outline-success btn-sm modified_button">Modifier</button>
+   				 </div>
+ 			 </div>
+		</div>
+
                   {% endif %}
                 {% endfor %}
               {% else %}  
@@ -1359,24 +1358,65 @@ input:checked + .slider::before {
 </script>
 <script>
 const socket = new WebSocket('ws://18.205.117.236:8000/ws/trips/');
-socket.onopen = function() {
-    console.log("WebSocket is connected.");
-};
+const notificationSound = new Audio('apps/static/assets/song/notification.mp3');
 
 socket.onmessage = function(event) {
-    console.log("Message received:", event.data);
     const data = JSON.parse(event.data);
+    console.log("Message reçu:", data);
 
-    // Example: Update trip information in the UI
-    const tripElement = document.getElementById(`trip-${data.id}`);
+    if (data.is_confirmed) {
+        // Play the notification sound
+        notificationSound.play();
+
+        // Add a new notification to the dropdown
+        const notificationDropdown = document.querySelector('#notification-dropdown');
+        const newNotification = document.createElement('li');
+        newNotification.className = 'dropdown-item border-radius-md';
+        newNotification.href = 'javascript:;';
+        newNotification.innerHTML = `
+            <div class="d-flex py-1">
+                <div class="d-flex flex-column justify-content-center">
+                    <h6 class="text-sm font-weight-normal mb-1">
+                        Trip Confirmé: Trip_id: ${data.trip_id}
+                    </h6>
+                    <p class="text-xs text-secondary mb-0">
+                        <i class="fa fa-calendar me-1"></i>
+                        Départ: ${data.confirmed_heure}
+                    </p>
+                </div>
+            </div>
+        `;
+
+        // Prepend the new notification to the dropdown
+        if (notificationDropdown) {
+            notificationDropdown.prepend(newNotification);
+        }
+    }
+
+    // Update the trip card as before
+    const tripElement = document.querySelector(`#trip-${data.trip_id}`);
     if (tripElement) {
-        tripElement.querySelector('.badge').innerText = data.is_confirmed ? "Confirmed" : "Searching";
-        tripElement.querySelector('.price').innerText = `${data.confirmed_price} TND`;
-        tripElement.querySelector('.heure').innerText = data.confirmed_heure;
-    } else {
-        // Logic to add a new trip if necessary
+        const badge = tripElement.querySelector('.badge');
+        if (badge) {
+            badge.textContent = "Trip Confirmé";
+            badge.className = `badge bg-gradient-success text-white py-2 px-3`;
+        }
+
+        const priceElement = tripElement.querySelector('.confirmed-price');
+	const buttonElement = tripElement.querySelector('.modified_button');
+        if (priceElement) {
+            priceElement.textContent = `${data.confirmed_price} TND`;
+	    buttonElement.addClass('d-none');
+        }
+
+        const heureElement = tripElement.querySelector('.confirmed-heure');
+        if (heureElement) {
+            heureElement.textContent = `Départ confirmé: ${data.confirmed_heure}`;
+        }
     }
 };
+
+
 
 socket.onerror = function(error) {
     console.error("WebSocket Error:", error);
