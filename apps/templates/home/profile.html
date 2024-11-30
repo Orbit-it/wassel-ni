@@ -310,7 +310,7 @@ input:checked + .slider::before {
        					 <a href="javascript:;" class="ms-3 text-success" title="Contacter le driver">
         							  <i class="fa fa-search fa-lg"></i>
        					 </a>
-					  <a href="javascript:;" class="ms-3 text-success d-none" title="Ouvrir le Chat du Trip">
+					  <a href="javascript:;" class="ms-3 text-success open_chat d-none" title="Ouvrir le Chat du Trip">
 		                              <i class="fa fa-comments fa-lg"></i>
 		                          </a>
      				 </div>
@@ -334,7 +334,7 @@ input:checked + .slider::before {
      				 </p>
 
      					 <!-- Prix confirmé -->
-     				 <p class="btn-outline-success text-white confirmed-price"></p>
+     				 <span class="btn-outline-success text-white confirmed-price"></span>
 
      					 <!-- Bouton -->
      				 <button type="button" class="btn btn-outline-success btn-sm modified_button">Modifier</button>
@@ -1408,10 +1408,12 @@ socket.onmessage = function(event) {
         const priceElement = tripElement.querySelector('.confirmed-price');
 	const buttonElement = tripElement.querySelector('.modified_button');
 	const searchIcon = tripElement.querySelector('.fa-search');
+	const openChat = tripElement.querySelector('open_chat');
         if (priceElement) {
             priceElement.textContent = `${data.confirmed_price} TND`;
 	    buttonElement.classList.add('d-none');
 	    searchIcon.classList.add('d-none');
+	    openChat.classList.remove('d-none');	
         }
 
         const heureElement = tripElement.querySelector('.confirmed-heure');
