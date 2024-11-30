@@ -266,10 +266,9 @@ input:checked + .slider::before {
                         <div class="card-body p-4 shadow-xl text-center border-radius-xl position-relative">
                           <!-- Statut du trajet et icône de contact alignés horizontalement -->
                           <div class="d-flex justify-content-center align-items-center mb-4">
-                            <span class="badge bg-gradient-secondary text-white py-2 px-2" style="margin-right: 5%; align-items: self-start;">{{trip.confirmed_price}} TND</span>
                             <span class="badge bg-success text-white py-2 px-3">Trip Confirmé</span>
                             <!-- Icône de message pour contact -->
-                            <a href="javascript:;" class="ms-3 text-success" title="Contacter le Chauffeur">
+                            <a href="javascript:;" class="ms-3 text-success" title="Ouvrir le Chat">
                               <i class="fa fa-comments fa-lg"></i>
                             </a>
                           </div>
@@ -292,11 +291,9 @@ input:checked + .slider::before {
                             Heure Départ: {{trip.confirmed_heure}}
                           </p>
                         
-                          <!-- Bouton pour voir les détails -->
-                          <button type="button" class="btn btn-outline-success btn-sm">Voir Trip</button>
+                          <!-- Le prix confirmé pour ce Trip -->
+		          <span class="badge bg-success text-white py-2 px-3">{{trip.confirmed_price}}</span>
                         </div>
-                        
-                        
                         
                       </div>
                     </div>
