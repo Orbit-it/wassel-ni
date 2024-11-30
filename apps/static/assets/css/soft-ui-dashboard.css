@@ -22704,4 +22704,60 @@ pre[class*=language-] {
     overflow: auto !important;
   }
 }
+.notification-bell {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-bell .fa-bell {
+    animation: none; /* Par défaut */
+}
+
+.notification-bell.ring .fa-bell {
+    animation: vibrate 0.5s linear infinite; /* Vibration */
+}
+
+.notification-bell::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 0, 0, 0.5); /* Couleur de l'onde */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    animation: wave 1s ease-out infinite;
+}
+
+.notification-bell.ring::after {
+    animation: wave 1s ease-out infinite;
+}
+
+/* Animation pour l'onde */
+@keyframes wave {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Animation pour la vibration */
+@keyframes vibrate {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-2px);
+    }
+    75% {
+        transform: translateX(2px);
+    }
+}
+
 /*# sourceMappingURL=soft-ui-dashboard.css.map */
