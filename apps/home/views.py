@@ -302,7 +302,7 @@ def match_trip_to_trajet(trip):
         trip.is_confirmed = True
         
         #Mettre la notification dans la base
-        notification = Notification.objects.create(user=trip.passenger, content="Un nouveau Trip vient d'etre confirmé")
+        notification = Notification.objects.create(user=trip.passenger, content="Trip confirmé")
         trip.save()
         notification.save()
         print("Trip confirmé avec succès.")
