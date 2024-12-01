@@ -39,6 +39,11 @@ class Car(models.Model):
         blank=False
     )
 
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=64, default="")
+    is_readed = models.BooleanField(default = False)
+
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
