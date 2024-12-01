@@ -22720,7 +22720,7 @@ pre[class*=language-] {
     animation: vibrate 0.5s linear infinite; /* Vibration */
 }
 
-.notification-bell::after {
+.notification-bell.ring::after {
     content: '';
     position: absolute;
     top: 50%;
