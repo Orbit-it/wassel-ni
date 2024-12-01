@@ -1359,7 +1359,7 @@ input:checked + .slider::before {
 <script>
 const socket = new WebSocket('ws://18.205.117.236:8000/ws/trips/');
 const notificationSound = new Audio('./static/assets/notification.mp3');
-const bell = document.querySelector('.fa-bell');	
+const bell = document.querySelector('.notification-bell');	
 	
 notificationSound.oncanplaythrough = () => {
     console.log("Audio chargé et prêt à être joué.");
@@ -1373,11 +1373,11 @@ socket.onmessage = function(event) {
         // Play the notification sound
         notificationSound.play();
 
-	bell.classList.add('notification-bell');
+	bell.classList.add('ring');
 
         // Retirez la classe après quelques secondes pour réinitialiser
         setTimeout(() => {
-            bell.classList.remove('notification-bell');
+            bell.classList.remove('ring');
         }, 5000);    
 
         // Add a new notification to the dropdown
