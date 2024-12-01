@@ -151,7 +151,7 @@ def index(request):
     trips = Trip.objects.filter(passenger = request.user.id)
     cars = Car.objects.filter(owner = request.user.id)
     user_cars = Car.objects.filter(owner=request.user)
-    notification = Notification.objects.filter(owner=request.user)
+    notification = Notification.objects.filter(user=request.user)
 
     user_bagage = request.user.bagage
 
