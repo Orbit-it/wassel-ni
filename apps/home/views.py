@@ -151,6 +151,7 @@ def index(request):
     trips = Trip.objects.filter(passenger = request.user.id)
     cars = Car.objects.filter(owner = request.user.id)
     user_cars = Car.objects.filter(owner=request.user)
+    notification = Notification.objects.filter(owner=request.user)
 
     user_bagage = request.user.bagage
 
@@ -188,6 +189,7 @@ def index(request):
             'user_bagage': user_bagage,
             'abonnement': abonnement,
             'user_abonnement': user_abonnement,
+            'notification': notification,   
            
                }
 
@@ -298,8 +300,12 @@ def match_trip_to_trajet(trip):
         trip.confirmed_price = trajet.price_per_seat
         trip.confirmed_heure = trajet.heure.strftime("%H:%M")
         trip.is_confirmed = True
+        
+        #Mettre la notification dans la base
+        notification = Notification.objects.create(user=trip.passenger, content="Un nouveau Trip vient d'etre confirmé")
         trip.save()
-        print("Trip sauvegardé avec succès.")
+        notification.save()
+        print("Trip confirmé avec succès.")
 
         # Notifier les clients via Channels
         channel_layer = get_channel_layer()
