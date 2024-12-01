@@ -1373,12 +1373,12 @@ socket.onmessage = function(event) {
         // Play the notification sound
         notificationSound.play();
 
-	bell.classList.add('.notification-bell');
+	bell.classList.add('notification-bell');
 
         // Retirez la classe après quelques secondes pour réinitialiser
         setTimeout(() => {
-            bell.classList.remove('.notification-bell');
-        }, 3000);    
+            bell.classList.remove('notification-bell');
+        }, 5000);    
 
         // Add a new notification to the dropdown
         const notificationDropdown = document.querySelector('#notification-dropdown');
