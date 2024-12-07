@@ -16,6 +16,24 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from .models import Trip, ChatMessage
+from django.contrib.auth.decorators import login_required
+import json
+
+
+""" 
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
+
+"""
 
 
 
@@ -285,7 +303,9 @@ def match_trip_to_trajet(trip):
         # Mise à jour des informations du trajet avec update()
         trajet_update_count = trajets.filter(id=trajet.id).update(
             places=trajet.places - 1,
-            is_full=(trajet.places - 1 == 0)
+            is_full=(trajet.places - 1 == 0),
+            status= "Complet" if (trajet.places - 1 == 0) else "Réservation en cours"
+
         )
 
         # Recharger l'objet trajet pour refléter les modifications
@@ -300,9 +320,11 @@ def match_trip_to_trajet(trip):
         trip.confirmed_price = trajet.price_per_seat
         trip.confirmed_heure = trajet.heure.strftime("%H:%M")
         trip.is_confirmed = True
+        trip.trajet_id = trajet.id
         
         #Mettre la notification dans la base
         notification = Notification.objects.create(user=trip.passenger, content="Trip confirmé")
+
         trip.save()
         notification.save()
         print("Trip confirmé avec succès.")
@@ -318,6 +340,7 @@ def match_trip_to_trajet(trip):
                     "confirmed_price": trip.confirmed_price,
                     "confirmed_heure": trip.confirmed_heure,
                     "is_confirmed": trip.is_confirmed,
+                    "trajet_id": trip.trajet_id,
                 },
             },
         )
@@ -346,7 +369,7 @@ def handle_new_trajet(sender, instance, created, **kwargs):
             heure_max__gte=instance.heure,
             price_max__gte=instance.price_per_seat,
             bagage=instance.bagage,
-            is_confirmed=False,
+            trajet_id=0,    #Tout trip avec champ trajet_id=0 n'est pas confirmé
             is_expired=False
         )
         for trip in trips:
@@ -366,6 +389,7 @@ def update_trip(trip_id):
             "type": "send_trip_update",
             "data": {
                 "id": trip.id,
+                "trajet_id": trip.trajet_id,
                 "source": trip.source,
                 "destination": trip.destination,
                 "is_confirmed": trip.is_confirmed,
@@ -376,3 +400,57 @@ def update_trip(trip_id):
             }
         }
     )
+
+
+
+@login_required
+def update_user_info(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        whatsapp = request.POST.get('whatsapp', '').strip()
+
+        # Mise à jour des informations utilisateur
+        user = request.user
+        user.username = username
+        user.email = email
+        user.phone = phone  # Suppose que le champ phone est dans un modèle `Profile` relié à `User`
+        user.whatsapp = whatsapp  # Idem pour whatsapp
+        user.save()
+
+        messages.success(request, "Vos informations ont été mises à jour avec succès !")
+        return redirect('/paramettres.html')  # Redirigez vers une page de profil ou une autre page pertinente
+
+    # Si la méthode n'est pas POST
+    return render(request, 'paramettres.html')
+
+
+
+
+@csrf_exempt
+@login_required
+def chat_view(request, trajet_id):
+    trajet = get_object_or_404(Trajet, id=trajet_id)
+
+    if request.method == "GET":
+        # Récupérer les messages pour ce trajet
+        messages = trajet.messages.order_by('timestamp').values('id', 'sender__username', 'message', 'timestamp')
+        return JsonResponse(list(messages), safe=False)
+
+    elif request.method == "POST":
+        # Enregistrer un nouveau message
+        data = json.loads(request.body)
+        message = data.get('message', '').strip()
+
+        if not message:
+            return JsonResponse({'error': 'Message cannot be empty.'}, status=400)
+
+        ChatMessage.objects.create(
+            trajet=trajet,
+            sender=request.user,
+            message=message
+        )
+        return JsonResponse({'message': 'Message sent successfully.'})
+
+    
