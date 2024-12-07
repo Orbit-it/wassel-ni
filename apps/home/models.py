@@ -75,6 +75,13 @@ class User(AbstractUser):
         return self.type == 'Passenger'
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    photo = models.ImageField(upload_to="apps/static/assets/img/", default="apps/static/assets/img/bruce-mars.jpg")
+
+    def __str__(self):
+        return self.user.username
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=64, default="")
@@ -130,6 +137,10 @@ class Trip(models.Model):
     bagage = models.CharField(default="Leger", max_length=16)
     is_confirmed = models.BooleanField(default=False)
     is_expired = models.BooleanField(default=False)
+    trajet_id = models.IntegerField(default=0)  # l'id du trajet pour regrouper les clients = 0 si trip non confirmé
+
+    def __str__(self):
+        return f"{self.source} -> {self.destination} ({self.date})"
 
     class Meta:
         indexes = [
@@ -137,6 +148,12 @@ class Trip(models.Model):
             models.Index(fields=['is_confirmed']),
         ]
 
-class TripChat(models.Model):
-    trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE)
-    passenger_list = models.ManyToManyField(Trip, blank=True)
+
+class ChatMessage(models.Model):
+    trajet = models.ForeignKey(Trajet, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.message[:30]}"
