@@ -1,273 +1,307 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} Tables {% endblock title %}
+{% block title %} Messages {% endblock title %}
 
-<!-- Specific CSS goes HERE -->
 {% block stylesheets %}
 <style>
- /* Styles généraux du header du modal */
-.modal-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background-color: #47b8e5; /* Couleur de fond douce */
-    border-bottom: 2px solid #363a3e; /* Bordure subtile pour délimiter la section */
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+    }
 
-/* Style du bouton de fermeture */
+    .tabs-container {
+      padding: 5px;
+    }
 
-.chat-box {
-    height: 300px;
-    overflow-y: auto;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    background-color: #e5ddd5; /* Couleur de fond neutre */
-}
+    .tab-button {
+        display: inline-block;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        background-color: #f0f0f0;
+        color: #333;
+        border-radius: 5px 5px 0 0;
+        margin-right: 5px;
+        cursor: pointer;
+    }
 
-/* Style des messages */
-.chat-box .message {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-}
+    .tab-button.active {
+        background-color: #36cda5;
+        color: #fff;
+        border-bottom: none;
+    }
 
-.chat-box .message-content {
-    padding: 10px;
-    border-radius: 20px;
-    max-width: 80%;
-    font-size: 14px;
-    line-height: 1.5;
-}
+    .chat-box {
+        height: 300px;
+        overflow-y: auto;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 0 0 10px 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: none;
+    }
 
-/* Message du passager (aligné à gauche) */
-.chat-box .message.passenger {
-    align-items: flex-start;
-}
+    .chat-box.active {
+        display: block;
+    }
 
-.chat-box .message.passenger .message-content {
-    background-color: #d1e7dd;
-    color: #000;
-    margin-right: auto; /* Pour aligner à gauche */
-    border-radius: 20px 20px 0 20px; /* Coin arrondi à droite */
-}
+    .message {
+        margin-bottom: 15px;
+    }
 
-/* Message du chauffeur (aligné à droite) */
-.chat-box .message.driver {
-    align-items: flex-end;
-}
+    .message.passenger .message-content {
+        background-color: #0fcd91;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 15px 15px 0 15px;
+    }
 
-.chat-box .message.driver .message-content {
-    background-color: #c3e6cb;
-    color: #000;
-    margin-left: auto; /* Pour aligner à droite */
-    border-radius: 20px 20px 20px 0; /* Coin arrondi à gauche */
-}
+    .message.driver .message-content {
+        background-color: #7fd3d3;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 15px 15px 15px 0;
+    }
 
-/* Style de la zone de saisie des messages */
+    .timestamp {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
 
-/* Style du bouton d'envoi */
-#sendMessageBtn {
-    
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .input-group {
+        display: flex;
+        margin-top: 10px;
+    }
 
-/* Style pour rendre le bouton désactivé si le champ est vide */
-#sendMessageBtn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
+    .input-group input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
 
+    .input-group button {
+        margin-left: 10px;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+    }
 
-.modal {
-    overflow-y: auto; /* Scroll uniquement dans le modal */
-    max-height: 90vh; /* Limiter la hauteur pour garder un espace visible */
-}
-
-.modal-open {
-    overflow: hidden; /* Empêche le scroll de la page lorsqu'un modal est ouvert */
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 25px;
-    margin-right: 10px;
-}
-
-.switch input {
-    display: none;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 25px;
-}
-
-.slider::before {
-    position: absolute;
-    content: "";
-    height: 19px;
-    width: 19px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #28a745;
-}
-
-input:checked + .slider::before {
-    transform: translateX(25px);
-}
-
+    .input-group button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
-
-    <div class="container-fluid py-4">
-
-      <div class="row">
-        <div class="col-12">
-          <div class="card mb-4">
-            <div class="card-header pb-0">
-              <h6> LISTE DES MESSAGES </h6>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5>Messages par Trajet</h5>
+        </div>
+        {% if trips  %}
+        <div class="card-body">
+            <!-- Onglets pour les trajets -->
+            <div class="tabs-container">
+                {% for trip in trips %}
+                <span
+                    class="tab-button {{ forloop.first|yesno:'active,' }}" 
+                    data-trip-id="trip-{{ trip.id }}" 
+                    onclick="switchTab(this)">
+                    {{ trip.source }} <i class="fa fa-arrow-right text-success"></i> {{trip.destination}}</br>
+                    <small>{{trip.date|date:"d F Y"}}</small>
+                    <small>à {{trip.confirmed_heure}} </small>
+                </span>
+                
+                {% endfor %}
             </div>
-            <div class="card-body px-0 pt-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">TRAJETS</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">DATE DE DEPART</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">HEURE DE DEPART</th>
-                      <th class="text-secondary opacity-7"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{{ ASSETS_ROOT }}/img/illustrations/rocket-dark.png" class="avatar avatar-sm me-3" alt="wasselni">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Tunis <i class="fa fa-arrow-right text-success"></i> Nabeul</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">01 Decembre 2024</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <p class="text-xs font-weight-bold mb-0">08h00</p>
-                      </td>
-                      
-                      <td class="align-middle text-center">
-                        <a class="btn bg-gradient-success" data-id="3" data-toggle="modal" data-target="#message" >OUVRIR</a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+
+            <!-- Boîtes de chat pour chaque trajet -->
+            {% for trip in trips %}
+            <div id="trip-{{ trip.id }}" class="chat-box {% if forloop.first %}active{% endif %}">
+              {% for message in messages %}
+              {% if message.trajet.id == trip.id %}
+              <div class="message {{ message.sender_type }}">
+                  <div class="message-content">
+                      {{ message.message }}
+                  </div>
+                  <div class="timestamp">
+                      {{ message.timestamp|date:"H:i d/m/Y" }}
+                  </div>
               </div>
+              {% endif %}
+              {% endfor %}
+          </div>
+          
+            {% endfor %}
+
+            <!-- Zone d'entrée -->
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Écrire un message..." oninput="toggleSendButton()">
+                <button id="sendMessageBtn" disabled>
+                    <i class="fa fa-paper-plane"></i>
+                </button>
             </div>
+        </div>
+        {% elif trajets %}
+        <div class="card-body">
+          <!-- Onglets pour les trajets -->
+          <div class="tabs-container">
+              {% for trip in trajets %}
+              <span
+                  class="tab-button {{ forloop.first|yesno:'active,' }}" 
+                  data-trip-id="trip-{{ trip.id }}" 
+                  onclick="switchTab(this)">
+                  {{ trip.source }} <i class="fa fa-arrow-right text-success"></i> {{trip.destination}}</br>
+                  <small>{{trip.date|date:"d F Y"}}</small>
+                  <small>à {{trip.heure}} </small>
+              </span>
+              
+              {% endfor %}
+          </div>
+
+          <!-- Boîtes de chat pour chaque trajet -->
+          {% for trip in trajets %}
+          <div id="trip-{{ trip.id }}" class="chat-box {% if forloop.first %}active{% endif %}">
+            {% for message in messages %}
+            {% if message.trajet.id == trip.id %}
+            <div class="message {{ message.sender_type }}">
+                <div class="message-content">
+                    {{ message.message }}
+                </div>
+                <div class="timestamp">
+                    {{ message.timestamp|date:"H:i d/m/Y" }}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        
+          {% endfor %}
+
+          <!-- Zone d'entrée -->
+          <div class="input-group">
+              <input type="text" id="messageInput" placeholder="Écrire un message..." oninput="toggleSendButton()">
+              <button id="sendMessageBtn" disabled>
+                  <i class="fa fa-paper-plane"></i>
+              </button>
           </div>
         </div>
-      </div>
-
-
-
-       <!-- Modal Chat -->
-     <div class="modal fade" id="message" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content"> 
-                <div class="modal-header">            
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="d-flex align-items-center">
-                            <h6 class="mb-0">Tunis <i class="fa fa-arrow-right text-success"></i> Nabeul</h6>
-                          </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <!-- Icône de date et heure -->
-                            <i class="fa fa-clock fa-lg"></i>
-                            <p class="modal-title mb-0" id="chatModalLabel">Départ: 20 Novembre 2024 à 13H30MN</p>
-                        </div>
-                    </div>
-                </div>
-                
-
-                <div class="modal-body">
-                    <!-- Messages -->
-                    <div class="chat-box" id="chatBox">
-                        <!-- Message du Chauffeur -->
-                        <div class="message driver">
-                            <div class="message-content">
-                                <strong>Chauffeur:</strong> Bonjour à tous, je suis le chauffeur. Nous allons commencer notre trajet dans 10 minutes.
-                            </div>
-                        </div>
-                        <!-- Message d'un Passager -->
-                        <div class="message passenger">
-                            <div class="message-content">
-                                <strong>Passager 1:</strong> Super, merci pour l'info ! Est-ce que je dois encore confirmer mon emplacement ?
-                            </div>
-                        </div>
-                        <!-- Message du Chauffeur -->
-                        <div class="message driver">
-                            <div class="message-content">
-                                <strong>Chauffeur:</strong> Non, tout est bon. Je vais récupérer les passagers à leur emplacement prévu.
-                            </div>
-                        </div>
-                        <!-- Message d'un Passager -->
-                        <div class="message passenger">
-                            <div class="message-content">
-                                <strong>Passager 2:</strong> D'accord, je vous attendrai à l'endroit indiqué.
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Zone de saisie des messages -->
-                    <div class="input-group">
-                        <input type="text" id="messageInput" style="height: 20%;" class="form-control" placeholder="Entrez votre message...">
-                        
-                        <button class="btn btn-primary" style="margin-left: 5px;" id="sendMessageBtn">Envoyer</button>
-                        
-                    </div>
-                </div>
-            </div>
+        {% else %}
+        <div class="card-body">      
+          <div>
+           <span>Vous n'avez pas de Message !</span> 
+          </div>
         </div>
-      </div>
-
+        {% endif %}
     </div>
+</div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const firstTab = document.querySelector('.tab-button.active');
+    if (firstTab) {
+        tripId = firstTab.dataset.tripId.replace('trip-', '');
+        loadMessages();
+    }
+});
 
-    
+    let tripId = null;
 
-{% include "includes/footer.html" %}
-    
+    const currentUser = "{{ request.user.username }}"; // Si vous utilisez Django
+
+    // Fonction pour basculer entre les onglets
+    function switchTab(tabElement) {
+        const tabs = document.querySelectorAll('.tab-button');
+        const boxes = document.querySelectorAll('.chat-box');
+
+        tabs.forEach(tab => tab.classList.remove('active'));
+        boxes.forEach(box => box.classList.remove('active'));
+
+        tabElement.classList.add('active');
+        const tripIdAttr = tabElement.dataset.tripId;
+        tripId = tripIdAttr.replace('trip-', ''); // Mettre à jour tripId
+        document.getElementById(tripIdAttr).classList.add('active');
+
+        // Charger les messages pour le trajet actif
+        loadMessages();
+    }
+
+    function toggleSendButton() {
+        const input = document.getElementById('messageInput');
+        const button = document.getElementById('sendMessageBtn');
+        button.disabled = input.value.trim() === '';
+    }
+
+    function loadMessages() {
+        if (!tripId) return;
+
+        const chatBox = document.getElementById(`trip-${tripId}`);
+        const chatApiUrl = `/chat/${tripId}/`;
+
+        fetch(chatApiUrl)
+            .then(response => response.json())
+            .then(messages => {
+                chatBox.innerHTML = '';
+                messages.forEach(msg => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message', msg.sender__username === currentUser ? 'passenger' : 'driver');
+                    messageDiv.innerHTML = `
+                        <div class="message-content">
+                            <strong>${msg.sender__username}</strong>
+                            <span style="font-size: 10px; color: white;">(${new Date(msg.timestamp).toLocaleString()})</span></br>
+                            ${msg.message}
+                        </div>
+                    `;
+                    chatBox.appendChild(messageDiv);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => console.error('Erreur lors du chargement des messages:', error));
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        if (!message || !tripId) return;
+
+        const chatApiUrl = `/chat/${tripId}/`;
+
+        fetch(chatApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ message })
+        })
+            .then(response => {
+                if (response.ok) {
+                    messageInput.value = '';
+                    loadMessages();
+                } else {
+                    console.error('Échec de l\'envoi du message.');
+                }
+            })
+            .catch(error => console.error('Erreur lors de l\'envoi du message:', error));
+    }
+
+    document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+
+    document.getElementById('messageInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+</script>
 {% endblock content %}
-
-<!-- Specific JS goes HERE --> 
-{% block javascripts %}
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<!-- jQuery (required for Bootstrap's JavaScript) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-{% endblock javascripts %}
