@@ -18,14 +18,14 @@
 
 
     <div class="row">
-      <div class="col-md-12 mt-4">
+      <div class="col-md-12 mt-4 mx-2">
         <div class="card">
           <div class="card-header pb-0 px-3">
             <h6 class="mb-0">PARAMETTRES ET INFORMATIONS</h6>
           </div>
           <div class="card-body pt-4 p-3">
             <ul class="list-group">
-              <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+              <li class="col-md-12 list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
                 <div class="d-flex flex-column align-items-center mb-4">
                     <!-- Photo de profil -->
                     <div class="position-relative">
@@ -38,28 +38,30 @@
                   
                   <div class="d-flex flex-column mx-3">
                     <h6 class="mb-3 text-sm">INFORMATIONS</h6>
-                    <span class="mb-2 text-xs">Nom d'utilisateur: <span class="text-dark font-weight-bold ms-sm-2"> {{request.user.username}} </span></span>
-                    <span class="mb-2 text-xs">Addresse Email: <span class="text-dark ms-sm-2 font-weight-bold"> {{request.user.email}} </span></span>
-                    <span class="mb-2 text-xs">Numéro de Téléphone: <span class="text-dark ms-sm-2 font-weight-bold">{{request.user.phone}}</span></span>
-                    <span class="mb-2 text-xs">Numéro de Whatsapp: <span class="text-dark ms-sm-2 font-weight-bold">{{request.user.whatsapp}}</span></span>
-                  </div>
-                <div class="ms-auto text-end">
-                  <a class="btn btn-link text-dark px-3 mb-0" data-bs-toggle="modal" data-bs-target="#informationsModal" href="javascript:;"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Modifier</a>
+                    <form id="user-info-form" method="POST" action="{% url 'update_user_info' %}">
+                        {% csrf_token %}
+                        <label class="mb-2 text-xs">Nom d'utilisateur:</label>
+                        <input type="text" name="username" class="form-control mb-2 text-dark font-weight-bold" 
+                               value="{{ request.user.username }}" required>
+                        
+                        <label class="mb-2 text-xs">Adresse Email:</label>
+                        <input type="email" name="email" class="form-control mb-2 text-dark font-weight-bold" 
+                               value="{{ request.user.email }}" required>
+                        
+                        <label class="mb-2 text-xs">Numéro de Téléphone:</label>
+                        <input type="tel" name="phone" class="form-control mb-2 text-dark font-weight-bold" 
+                               value="{{ request.user.phone }}" required>
+                        
+                        <label class="mb-2 text-xs">Numéro de Whatsapp:</label>
+                        <input type="tel" name="whatsapp" class="form-control mb-2 text-dark font-weight-bold" 
+                               value="{{ request.user.whatsapp }}">
+                        
+                        <button type="submit" class="btn btn-success mt-3">Mettre à jour</button>
+                    </form>
                 </div>
               </li>
-              {% if request.user.type == "Passenger" %}
-              <li class="list-group-item border-0 d-flex p-4 mb-2 mt-3 bg-gray-100 border-radius-lg">
-                <div class="d-flex flex-column">
-                  <h6 class="mb-3 text-sm">PARAMETTRES DES MARGES DE RESERVATIONS</h6>
-                  <span class="mb-2 text-xs">Marge de prix des Trajets: <span class="text-dark font-weight-bold ms-sm-2">05 TND</span></span>
-                  <span class="mb-2 text-xs">Marge d'heure de départ: <span class="text-dark ms-sm-2 font-weight-bold">30 Minutes</span></span>
-                </div>
-                <div class="ms-auto text-end">
-                  <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Modifier</a>
-                </div>
-              </li>
-              {% endif %}
-              <li class="list-group-item border-0 d-flex p-4 mb-2 mt-3 bg-gray-100 border-radius-lg">
+              
+              <li class="col-md-12 list-group-item border-0 d-flex p-4 mb-2 mt-3 bg-gray-100 border-radius-lg">
                 <div class="d-flex flex-column">
                   <h6 class="mb-3 text-sm">PARAMETTRES DES NOTTIFICATIONS</h6>
                   <ul class="list-group">
@@ -87,79 +89,48 @@
       <!--Modal de Mise à jour de la photo de profil-->
       <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-body">
-              <div class="mt-3 text-center align-items-center">
-                <button id="deletePhotoBtn" class="btn btn-danger">Supprimer la photo</button>
-              </div>
-              <form id="profileForm">
-                <label  for="profileUpload" class="form-label bg-dark px-2">Choisir une nouvelle photo :</label>
-                <input type="file" id="profileUpload" class="form-control" accept="image/*">
-              </form>
-             
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <p class="text-muted mb-4">
+                        <strong>Vous ne pouvez pas changer votre photo de profil avec un abonnement gratuit.</strong></br>
+                        Pour débloquer toutes les fonctionnalités et profiter d'une expérience complète, 
+                        souscrivez à un abonnement payant dès aujourd'hui !
+                    </p>
+                    <button class="btn btn-primary bg-gradient-primary px-4 py-2">
+                        <i class="fas fa-lock me-2"></i> Passer à un abonnement payant
+                    </button>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="button" class="btn bg-gradient-success" onclick="submitProfilePicture()">Enregistrer</button>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
 
-      <!--Modal de Mise à jour informations-->
-      <div class="modal fade" id="informationsModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-body">
-             
-              <form name="form_update_info_user" id="form_update_info_user" method="post">
-                {% csrf_token %}
-                <div class="d-flex align-items-center" style="margin: 10px;">
-                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 180px; display: inline-block;">Nom <i class="fa fa-user-edit"></i></span>    
-                    <input type="text" name="username" id="update_username" placeholder="{{request.user.username}}" class="form-control" >
-                </div>
 
-                <div class="d-flex align-items-center" style="margin: 10px;">
-                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 180px; display: inline-block;">Email <i class="fa fa-envelope"></i></span>    
-                    <input type="text" name="email" id="update_email" placeholder="{{request.user.email}}" class="form-control" >
-                </div>
-
-                <div class="d-flex align-items-center" style="margin: 10px;">
-                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 180px; display: inline-block;">Téléphone <i class="fa fa-phone"></i></span>    
-                    <input type="text" name="phone" id="update_phone" placeholder="{{request.user.phone}}" class="form-control" >
-                </div>
-
-                <div class="d-flex align-items-center" style="margin: 10px;">
-                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 180px; display: inline-block;">Whatsapp <i class="fab fa-whatsapp"></i></span>    
-                    <input type="text" name="whatsapp" id="update_phone" placeholder="{{request.user.whatsapp}}" class="form-control" >
-                </div>
-
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                  <button type="submit" class="btn bg-gradient-success">Mettre à jour</button>
-                </div>
-
-              </form>
-             
-            </div>
-  
-              <!-- Animation de Chargement -->
-              <div id="loading_update_info" class="d-none text-center">
-                <div class="spinner-border" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2 text-success">Mis à jour des infos...</p>
-              </div>
-              <!-- Confirmation de Succès -->
-              <div id="success_update_info" class="d-none text-center">
-                <div class="text-success">
-                  <i class="fa fa-check-circle" style="font-size: 4rem;"></i>
-                </div>
-                <p class="mt-2 text-success">Vos Informations sont mises à jour!</p>
-              </div>
-          </div>
+    <!-- Modal Bootstrap -->
+<div class="modal fade" id="premiumFeatureModal" tabindex="-1" aria-labelledby="premiumFeatureModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-body text-center py-4">
+            <p class="text-muted mb-4">
+                <strong>Vous ne pouvez pas activer les nottifications par SMS/Whatsapp avec un abonnement gratuit.</strong></br>
+                Pour débloquer toutes les fonctionnalités et profiter d'une expérience complète, 
+                souscrivez à un abonnement payant dès aujourd'hui !
+            </p>
+            <button class="btn btn-primary bg-gradient-primary px-4 py-2">
+                <i class="fas fa-lock me-2"></i> Passer à un abonnement payant
+            </button>
         </div>
-      </div>
+        <div class="modal-footer border-0 justify-content-center">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+    </div>
+</div>
+</div>
+
+    
+
       <!--Fin de Modal-->
       
       
@@ -173,6 +144,26 @@
 
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const premiumSwitches = document.querySelectorAll('.form-check-input');
+
+    premiumSwitches.forEach(switchElement => {
+      switchElement.addEventListener('change', function (e) {
+        if (this.checked) {
+          // Afficher le modal
+          const premiumModal = new bootstrap.Modal(document.getElementById('premiumFeatureModal'));
+          premiumModal.show();
+
+          // Réinitialiser l'état du switch après un délai pour laisser le modal s'afficher
+          setTimeout(() => {
+            this.checked = false;
+          }, 100);
+        }
+      });
+    });
+  });
+</script>
 <script>
 function submitProfilePicture() {
   const fileInput = document.getElementById('profileUpload');
@@ -298,6 +289,11 @@ $("#form_update_info_user").on("submit", function (e) {
 // End ============================
 
 
+
+
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock javascripts %}
