@@ -218,7 +218,15 @@ def index(request):
 @login_required(login_url="/login/")
 def pages(request):
 
-    context = {}
+    trajets = Trajet.objects.filter(driver = request.user.id)
+    trips = Trip.objects.filter(passenger = request.user.id)
+    messages = ChatMessage.objects.all()
+
+    context = {
+        "trajets": trajets,
+        "trips": trips,
+        "messages": messages,
+    }
 
 
     # All resource paths end in .html.
