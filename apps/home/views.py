@@ -79,12 +79,8 @@ def add_trajet_ajax(request):
         places = request.POST.get('nombre_places')
         heure = request.POST.get('heure')
         minute = request.POST.get('minute')
-        jour = request.POST.get("jour") 
-        mois = request.POST.get("mois") 
-        annee = request.POST.get("annee")
-
-        if jour and mois and annee:
-            complete_date = date(int(annee), int(mois), int(jour))
+        date = request.POST.get("date") 
+        
 
         if heure and minute:
             complete_heure = time(int(heure), int(minute))    
@@ -98,7 +94,7 @@ def add_trajet_ajax(request):
                 price_per_seat = prix, 
                 passengers_sex = passagers,
                 bagage = request.user.bagage,
-                date = complete_date,
+                date = date,
                 heure = complete_heure,
                 driver = request.user,
                 places = places,
@@ -123,12 +119,8 @@ def add_trip_ajax(request):
         driver = request.POST.get('driver')
         heure_min = request.POST.get('heure_min')
         heure_max = request.POST.get('heure_max')
-        jour = request.POST.get("jour") 
-        mois = request.POST.get("mois") 
-        annee = request.POST.get("annee")
-
-        if jour and mois and annee:
-            complete_date = date(int(annee), int(mois), int(jour))   
+        date = request.POST.get("date") 
+        
 
         # Vérifier les données reçues
         if source and destination and prix and driver and heure_min and heure_max:
@@ -139,7 +131,7 @@ def add_trip_ajax(request):
                 destination = destination,
                 driver_sexe = driver,
                 price_max = prix,
-                date = complete_date,
+                date = date,
                 heure_min = heure_min,
                 heure_max = heure_max,
                 bagage = request.user.bagage
