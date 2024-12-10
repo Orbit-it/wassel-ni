@@ -91,34 +91,6 @@
 
 
 
-   // Fonction pour comparer la date sélectionnée avec la date actuelle
-   function validateDateSelection() {
-      // Récupérer la date actuelle
-      const today = new Date();
-      const currentYear = today.getFullYear();
-      const currentMonth = today.getMonth() + 1; // Mois est 0-indexé, donc +1
-      const currentDay = today.getDate();
-  
-      // Récupérer les valeurs sélectionnées par l'utilisateur
-      const selectedYear = parseInt(document.getElementById('annee').value);
-      const selectedMonth = parseInt(document.getElementById('mois').value);
-      const selectedDay = parseInt(document.getElementById('jour').value);
-  
-      // Comparer les dates : si la date choisie est antérieure à la date actuelle, réinitialiser la sélection
-      if (
-        (selectedYear < currentYear) ||
-        (selectedYear === currentYear && selectedMonth < currentMonth) ||
-        (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay < currentDay)
-      ) {
-        alert("La date sélectionnée ne peut pas être antérieure à la date actuelle.");
-        
-        // Réinitialiser la sélection
-        document.getElementById('jour').value = '';
-        document.getElementById('mois').value = '';
-        document.getElementById('annee').value = '';
-      }
-    }
-
    // Fonction pour les heures min et max sélectionnée
    function validateHeureSelection() {
     
@@ -142,19 +114,6 @@
     document.getElementById('heure_max').addEventListener('change', validateHeureSelection);
 
 
-    function formatPrice(input) {
-        let value = input.value.replace(/\D/g, ""); // Enlève tout sauf les chiffres
-        value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); // Ajoute les séparateurs de milliers
-
-        input.value = value;
-    }
-  
-    // Ajouter un écouteur d'événements pour vérifier la date lorsque l'utilisateur sélectionne une option
-    document.getElementById('jour').addEventListener('change', validateDateSelection);
-    document.getElementById('mois').addEventListener('change', validateDateSelection);
-    document.getElementById('annee').addEventListener('change', validateDateSelection);
-
-   
 
 
 
@@ -501,7 +460,7 @@ function getCookie(name) {
 
 
 
-const socket = new WebSocket('ws://18.205.117.236:8000/ws/trips/'); //@ip_server=18.205.117.236
+const socket = new WebSocket('ws://localhost:8000/ws/trips/'); //@ip_server=18.205.117.236
 const notificationSound = new Audio('./static/assets/notification.mp3');
 const bell = document.querySelector('.notification-bell');	
 	
