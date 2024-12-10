@@ -38,7 +38,7 @@
                   
                   <div class="d-flex flex-column mx-3">
                     <h6 class="mb-3 text-sm">INFORMATIONS</h6>
-                    <form id="user-info-form" method="POST">
+                    <form id="user-info-form" method="POST" action="{% url 'update_user_info' %}">
                         {% csrf_token %}
                         <label class="mb-2 text-xs">Nom d'utilisateur:</label>
                         <input type="text" name="username" class="form-control mb-2 text-dark font-weight-bold" 
@@ -123,7 +123,7 @@
             </button>
         </div>
         <div class="modal-footer border-0 justify-content-center">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" id="closeModal" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
         </div>
     </div>
 </div>
@@ -144,25 +144,38 @@
 
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+ document.addEventListener('DOMContentLoaded', function () {
     const premiumSwitches = document.querySelectorAll('.form-check-input');
+    const premiumModalElement = document.getElementById('premiumFeatureModal');
+    const premiumModal = new bootstrap.Modal(premiumModalElement);
 
     premiumSwitches.forEach(switchElement => {
-      switchElement.addEventListener('change', function (e) {
-        if (this.checked) {
-          // Afficher le modal
-          const premiumModal = new bootstrap.Modal(document.getElementById('premiumFeatureModal'));
-          premiumModal.show();
+        switchElement.addEventListener('change', function () {
+            if (this.checked) {
+                // Afficher le modal
+                premiumModal.show();
 
-          // Réinitialiser l'état du switch après un délai pour laisser le modal s'afficher
-          setTimeout(() => {
-            this.checked = false;
-          }, 100);
-        }
-      });
+                 // Réinitialiser l'état du switch après un délai pour laisser le modal s'afficher
+                setTimeout(() => {
+                  this.checked = false;
+                }, 100);
+
+                
+            }
+        });
     });
-  });
+
+    // Gérer le bouton "Annuler" pour fermer explicitement le modal
+    document.getElementById('closeModal').addEventListener('click', function () {
+        premiumModal.hide();
+    });
+});
+
 </script>
 <script>
 function submitProfilePicture() {
@@ -292,8 +305,4 @@ $("#form_update_info_user").on("submit", function (e) {
 
 
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock javascripts %}
