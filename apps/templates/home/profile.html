@@ -346,8 +346,7 @@ input:checked + .slider::before {
      					 <!-- Prix confirmé -->
 				 <span class="badge bg-success text-white py-2 px-3 confirmed-price"></span>	 
 
-     					 <!-- Bouton -->
-     				 <button type="button" class="btn btn-outline-success btn-sm modified_button">Modifier</button>
+     					 
    				 </div>
  			 </div>
 		</div>
@@ -531,8 +530,7 @@ input:checked + .slider::before {
                             <p class="text-secondary mb-2">
                               Heure Départ: {{ trajet.heure|time:"H" }}h{{ trajet.heure|time:"i" }}
                             </p>
-                            <!-- Bouton pour Modifier -->
-                            <button class="btn btn-outline-success btn-sm">Modifier</button>
+                            
                       
                       </div>
                     </div>
@@ -931,14 +929,108 @@ input:checked + .slider::before {
                     <div class="d-flex align-items-center" style="margin: 10px;">
                     <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Départ <i class="fa fa-map-marker-alt"></i></span>
                         <div class="custom-select-container bg-light">
-                        <select name="source" id="source" class="form-control" style="margin-left: 5px;" onchange="updateDestinationOptions()">
-                          <option value="">Ville de départ</option>
-                          <option value="Tunis">Tunis</option>
-                          <option value="Nabeul">Nabeul</option>
-                          <option value="Sfax">Sfax</option>
-                          <option value="Bizerte">Bizerte</option>
-                          <option value="Sousse">Sousse</option>
-                        </select>
+
+                          <select name="source" id="source" class="form-control" style="margin-left: 5px;" onchange="updateDestinationOptions()">
+                            <option value="">Ville de départ</option>
+                            <!-- Gouvernorat de Tunis -->
+                            <optgroup label="Tunis">
+                              <option value="Tunis-Center">Tunis-Center</option>
+                              <option value="Carthage">Carthage</option>
+                              <option value="La Marsa">La Marsa</option>
+                              <option value="Le Kram">Le Kram</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Nabeul -->
+                            <optgroup label="Nabeul">
+                              <option value="Nabeul-Center">Nabeul-Center</option>
+                              <option value="Hammamet">Hammamet</option>
+                              <option value="Kelibia">Kelibia</option>
+                              <option value="Korba">Korba</option>
+                              <option value="Menzel Temime">Menzel Temime</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Sfax -->
+                            <optgroup label="Sfax">
+                              <option value="Sfax-Center">Sfax-Center</option>
+                              <option value="Thyna">Thyna</option>
+                              <option value="Skhira">Skhira</option>
+                              <option value="Mahres">Mahres</option>
+                              <option value="El Amra">El Amra</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Bizerte -->
+                            <optgroup label="Bizerte">
+                              <option value="Bizerte-Center">Bizerte-Center</option>
+                              <option value="Menzel Bourguiba">Menzel Bourguiba</option>
+                              <option value="Ras Jebel">Ras Jebel</option>
+                              <option value="Metline">Metline</option>
+                              <option value="Sejnane">Sejnane</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Sousse -->
+                            <optgroup label="Sousse">
+                              <option value="Sousse-Center">Sousse-Center</option>
+                              <option value="Port El Kantaoui">Port El Kantaoui</option>
+                              <option value="Kalaa Kebira">Kalaa Kebira</option>
+                              <option value="Hammam Sousse">Hammam Sousse</option>
+                              <option value="Msaken">Msaken</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Monastir -->
+                            <optgroup label="Monastir">
+                              <option value="Monastir-Center">Monastir-Center</option>
+                              <option value="Skanes">Skanes</option>
+                              <option value="Sahline">Sahline</option>
+                              <option value="Bekalta">Bekalta</option>
+                              <option value="Jemmal">Jemmal</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Kairouan -->
+                            <optgroup label="Kairouan">
+                              <option value="Kairouan-Center">Kairouan-Center</option>
+                              <option value="Sbikha">Sbikha</option>
+                              <option value="Haffouz">Haffouz</option>
+                              <option value="Oueslatia">Oueslatia</option>
+                              <option value="Bou Hajla">Bou Hajla</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Gabès -->
+                            <optgroup label="Gabès">
+                              <option value="Gabès-Center">Gabès-Center</option>
+                              <option value="Gabès Sud">Gabès Sud</option>
+                              <option value="Mareth">Mareth</option>
+                              <option value="Matmata">Matmata</option>
+                              <option value="Ghannouch">Ghannouch</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Médenine -->
+                            <optgroup label="Médenine">
+                              <option value="Médenine-Center">Médenine-Center</option>
+                              <option value="Djerba">Djerba</option>
+                              <option value="Zarzis">Zarzis</option>
+                              <option value="Ben Guerdane">Ben Guerdane</option>
+                              <option value="Beni Khedache">Beni Khedache</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Tataouine -->
+                            <optgroup label="Tataouine">
+                              <option value="Tataouine-Center">Tataouine-Center</option>
+                              <option value="Remada">Remada</option>
+                              <option value="Dehiba">Dehiba</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Gafsa -->
+                            <optgroup label="Gafsa">
+                              <option value="Gafsa-Center">Gafsa-Center</option>
+                              <option value="Métlaoui">Métlaoui</option>
+                              <option value="Redeyef">Redeyef</option>
+                              <option value="El Guettar">El Guettar</option>
+                              <option value="Moularès">Moularès</option>
+                            </optgroup>
+                           
+                          </select>
+                          
+
                         </div>
                      </div>             
                   <!-- Destination Selection -->
@@ -947,11 +1039,101 @@ input:checked + .slider::before {
                       <div class="custom-select-container">
                       <select name="destination" id="destination" class="form-control bg-light custom-select" style="margin-left: 5px;" onchange="updateSourceOptions()">
                           <option value="">Ville d'arrivée</option>
-                          <option value="Tunis">Tunis</option>
-                          <option value="Nabeul">Nabeul</option>
-                          <option value="Sfax">Sfax</option>
-                          <option value="Bizerte">Bizerte</option>
-                          <option value="Sousse">Sousse</option>
+                          <!-- Gouvernorat de Tunis -->
+                          <optgroup label="Tunis">
+                            <option value="Tunis-Center">Tunis-Center</option>
+                            <option value="Carthage">Carthage</option>
+                            <option value="La Marsa">La Marsa</option>
+                            <option value="Le Kram">Le Kram</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Nabeul -->
+                          <optgroup label="Nabeul">
+                            <option value="Nabeul-Center">Nabeul-Center</option>
+                            <option value="Hammamet">Hammamet</option>
+                            <option value="Kelibia">Kelibia</option>
+                            <option value="Korba">Korba</option>
+                            <option value="Menzel Temime">Menzel Temime</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Sfax -->
+                          <optgroup label="Sfax">
+                            <option value="Sfax-Center">Sfax-Center</option>
+                            <option value="Thyna">Thyna</option>
+                            <option value="Skhira">Skhira</option>
+                            <option value="Mahres">Mahres</option>
+                            <option value="El Amra">El Amra</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Bizerte -->
+                          <optgroup label="Bizerte">
+                            <option value="Bizerte-Center">Bizerte-Center</option>
+                            <option value="Menzel Bourguiba">Menzel Bourguiba</option>
+                            <option value="Ras Jebel">Ras Jebel</option>
+                            <option value="Metline">Metline</option>
+                            <option value="Sejnane">Sejnane</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Sousse -->
+                          <optgroup label="Sousse">
+                            <option value="Sousse-Center">Sousse-Center</option>
+                            <option value="Port El Kantaoui">Port El Kantaoui</option>
+                            <option value="Kalaa Kebira">Kalaa Kebira</option>
+                            <option value="Hammam Sousse">Hammam Sousse</option>
+                            <option value="Msaken">Msaken</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Monastir -->
+                          <optgroup label="Monastir">
+                            <option value="Monastir-Center">Monastir-Center</option>
+                            <option value="Skanes">Skanes</option>
+                            <option value="Sahline">Sahline</option>
+                            <option value="Bekalta">Bekalta</option>
+                            <option value="Jemmal">Jemmal</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Kairouan -->
+                          <optgroup label="Kairouan">
+                            <option value="Kairouan-Center">Kairouan-Center</option>
+                            <option value="Sbikha">Sbikha</option>
+                            <option value="Haffouz">Haffouz</option>
+                            <option value="Oueslatia">Oueslatia</option>
+                            <option value="Bou Hajla">Bou Hajla</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Gabès -->
+                          <optgroup label="Gabès">
+                            <option value="Gabès-Center">Gabès-Center</option>
+                            <option value="Gabès Sud">Gabès Sud</option>
+                            <option value="Mareth">Mareth</option>
+                            <option value="Matmata">Matmata</option>
+                            <option value="Ghannouch">Ghannouch</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Médenine -->
+                          <optgroup label="Médenine">
+                            <option value="Médenine-Center">Médenine-Center</option>
+                            <option value="Djerba">Djerba</option>
+                            <option value="Zarzis">Zarzis</option>
+                            <option value="Ben Guerdane">Ben Guerdane</option>
+                            <option value="Beni Khedache">Beni Khedache</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Tataouine -->
+                          <optgroup label="Tataouine">
+                            <option value="Tataouine-Center">Tataouine-Center</option>
+                            <option value="Remada">Remada</option>
+                            <option value="Dehiba">Dehiba</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Gafsa -->
+                          <optgroup label="Gafsa">
+                            <option value="Gafsa-Center">Gafsa-Center</option>
+                            <option value="Métlaoui">Métlaoui</option>
+                            <option value="Redeyef">Redeyef</option>
+                            <option value="El Guettar">El Guettar</option>
+                            <option value="Moularès">Moularès</option>
+                          </optgroup>
                       </select>
                       </div>
                   </div>
@@ -964,7 +1146,7 @@ input:checked + .slider::before {
                       <select name="passagers" class="form-control bg-light custom-select" style="margin-left: 5px;">
                           <option value="homme">Homme</option>
                           <option value="femme">Femme</option>
-                          <option value="mixte" selected>Mixte</option>
+                          <option value="mixte" selected>Homme/Femme</option>
                       </select>
                     </div>
                   </div>
@@ -976,7 +1158,7 @@ input:checked + .slider::before {
                     <!-- Champ de saisie du prix avec une devise (CFA, EUR,TND ou autre) -->
                     <div class="input-group" style="margin-left: 5px;">
                         <span class="input-group-text" id="basic-addon1" style="min-width: 50px;">TND</span>
-                        <input name="prix" type="number" class="form-control bg-dark text-center" min="0" placeholder=" Prix" aria-describedby="basic-addon1" step="1" oninput="formatPrice(this)">
+                        <input name="prix" type="number" class="form-control bg-dark text-center" min="0" placeholder=" Prix" aria-describedby="basic-addon1" step="1">
                     </div>
                   </div>
 
@@ -996,72 +1178,11 @@ input:checked + .slider::before {
 
                   <!-- Date Input -->
                   <div class="d-flex align-items-center" style="margin: 10px;">
-                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 120px; display: inline-block;">Date <i class="fa fa-calendar"></i></span>
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Date <i class="fa fa-calendar"></i></span>
                     
-                    <!-- Sélection du jour -->
-                    <select id="jour" name="jour" class="form-control" style="width: 80px; margin-right: 5px;">
-                        <option value="" disabled selected>JJ</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="26">26</option>
-                        <option value="27">27</option>
-                        <option value="28">28</option>
-                        <option value="29">29</option>
-                        <option value="30">30</option>
-                        <option value="31">31</option>
-                    </select>
-                    
-                    <!-- Sélection du mois -->
-                    <select id="mois" name="mois" class="form-control" style="width: 100px; margin-right: 5px;">
-                        <option value="" disabled selected>MM</option>
-                        <option value="01">Jan</option>
-                        <option value="02">Feb</option>
-                        <option value="03">Mar</option>
-                        <option value="04">Apr</option>
-                        <option value="05">May</option>
-                        <option value="06">Jun</option>
-                        <option value="07">Jul</option>
-                        <option value="08">Aug</option>
-                        <option value="09">Sep</option>
-                        <option value="10">Oct</option>
-                        <option value="11">Nov</option>
-                        <option value="12">Dec</option>
-                    </select>
-                
-                    <!-- Sélection de l'année -->
-                    <select id="annee" name="annee" class="form-control" style="width: 100px;">
-                        <option value="" disabled selected>YYYY</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                        <option value="2028">2028</option>
-                        <option value="2029">2029</option>
-                        <option value="2030">2030</option>
-                    </select>
+                    <!-- Sélection de la date -->
+                    <input id="date" name="date" type="date" class="form-control text-center" min="0" placeholder=" Date" onchange="validateDateSelection()">
+                  
                 </div>
 
                   <!-- Heure Input -->
@@ -1175,14 +1296,106 @@ input:checked + .slider::before {
                     <div class="d-flex align-items-center" style="margin: 10px;">
                     <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Départ <i class="fa fa-map-marker-alt"></i></span>
                         <div class="custom-select-container bg-light">
-                        <select name="source" id="source" class="form-control" style="margin-left: 5px;" onchange="updateDestinationOptions()">
-                          <option value="">Ville de départ</option>
-                          <option value="Tunis">Tunis</option>
-                          <option value="Nabeul">Nabeul</option>
-                          <option value="Sfax">Sfax</option>
-                          <option value="Bizerte">Bizerte</option>
-                          <option value="Sousse">Sousse</option>
-                        </select>
+                          <select name="source" id="source" class="form-control" style="margin-left: 5px;" onchange="updateDestinationOptions()">
+                            <option value="">Ville de départ</option>
+                            
+                            <!-- Gouvernorat de Tunis -->
+                            <optgroup label="Tunis">
+                              <option value="Tunis-Center">Tunis-Center</option>
+                              <option value="Carthage">Carthage</option>
+                              <option value="La Marsa">La Marsa</option>
+                              <option value="Le Kram">Le Kram</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Nabeul -->
+                            <optgroup label="Nabeul">
+                              <option value="Nabeul-Center">Nabeul-Center</option>
+                              <option value="Hammamet">Hammamet</option>
+                              <option value="Kelibia">Kelibia</option>
+                              <option value="Korba">Korba</option>
+                              <option value="Menzel Temime">Menzel Temime</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Sfax -->
+                            <optgroup label="Sfax">
+                              <option value="Sfax-Center">Sfax-Center</option>
+                              <option value="Thyna">Thyna</option>
+                              <option value="Skhira">Skhira</option>
+                              <option value="Mahres">Mahres</option>
+                              <option value="El Amra">El Amra</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Bizerte -->
+                            <optgroup label="Bizerte">
+                              <option value="Bizerte-Center">Bizerte-Center</option>
+                              <option value="Menzel Bourguiba">Menzel Bourguiba</option>
+                              <option value="Ras Jebel">Ras Jebel</option>
+                              <option value="Metline">Metline</option>
+                              <option value="Sejnane">Sejnane</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Sousse -->
+                            <optgroup label="Sousse">
+                              <option value="Sousse-Center">Sousse-Center</option>
+                              <option value="Port El Kantaoui">Port El Kantaoui</option>
+                              <option value="Kalaa Kebira">Kalaa Kebira</option>
+                              <option value="Hammam Sousse">Hammam Sousse</option>
+                              <option value="Msaken">Msaken</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Monastir -->
+                            <optgroup label="Monastir">
+                              <option value="Monastir-Center">Monastir-Center</option>
+                              <option value="Skanes">Skanes</option>
+                              <option value="Sahline">Sahline</option>
+                              <option value="Bekalta">Bekalta</option>
+                              <option value="Jemmal">Jemmal</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Kairouan -->
+                            <optgroup label="Kairouan">
+                              <option value="Kairouan-Center">Kairouan-Center</option>
+                              <option value="Sbikha">Sbikha</option>
+                              <option value="Haffouz">Haffouz</option>
+                              <option value="Oueslatia">Oueslatia</option>
+                              <option value="Bou Hajla">Bou Hajla</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Gabès -->
+                            <optgroup label="Gabès">
+                              <option value="Gabès-Center">Gabès-Center</option>
+                              <option value="Gabès Sud">Gabès Sud</option>
+                              <option value="Mareth">Mareth</option>
+                              <option value="Matmata">Matmata</option>
+                              <option value="Ghannouch">Ghannouch</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Médenine -->
+                            <optgroup label="Médenine">
+                              <option value="Médenine-Center">Médenine-Center</option>
+                              <option value="Djerba">Djerba</option>
+                              <option value="Zarzis">Zarzis</option>
+                              <option value="Ben Guerdane">Ben Guerdane</option>
+                              <option value="Beni Khedache">Beni Khedache</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Tataouine -->
+                            <optgroup label="Tataouine">
+                              <option value="Tataouine-Center">Tataouine-Center</option>
+                              <option value="Remada">Remada</option>
+                              <option value="Dehiba">Dehiba</option>
+                            </optgroup>
+                            
+                            <!-- Gouvernorat de Gafsa -->
+                            <optgroup label="Gafsa">
+                              <option value="Gafsa-Center">Gafsa-Center</option>
+                              <option value="Métlaoui">Métlaoui</option>
+                              <option value="Redeyef">Redeyef</option>
+                              <option value="El Guettar">El Guettar</option>
+                              <option value="Moularès">Moularès</option>
+                            </optgroup>
+                          </select>                          
+                          
                         </div>
                      </div>               
                   <!-- Destination Selection -->
@@ -1191,11 +1404,101 @@ input:checked + .slider::before {
                       <div class="custom-select-container">
                       <select name="destination" id="destination" class="form-control bg-light custom-select" style="margin-left: 5px;" onchange="updateSourceOptions()">
                           <option value="">Ville d'arrivée</option>
-                          <option value="Tunis">Tunis</option>
-                          <option value="Nabeul">Nabeul</option>
-                          <option value="Sfax">Sfax</option>
-                          <option value="Bizerte">Bizerte</option>
-                          <option value="Sousse">Sousse</option>
+                          <!-- Gouvernorat de Tunis -->
+                          <optgroup label="Tunis">
+                            <option value="Tunis-Center">Tunis-Center</option>
+                            <option value="Carthage">Carthage</option>
+                            <option value="La Marsa">La Marsa</option>
+                            <option value="Le Kram">Le Kram</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Nabeul -->
+                          <optgroup label="Nabeul">
+                            <option value="Nabeul-Center">Nabeul-Center</option>
+                            <option value="Hammamet">Hammamet</option>
+                            <option value="Kelibia">Kelibia</option>
+                            <option value="Korba">Korba</option>
+                            <option value="Menzel Temime">Menzel Temime</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Sfax -->
+                          <optgroup label="Sfax">
+                            <option value="Sfax-Center">Sfax-Center</option>
+                            <option value="Thyna">Thyna</option>
+                            <option value="Skhira">Skhira</option>
+                            <option value="Mahres">Mahres</option>
+                            <option value="El Amra">El Amra</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Bizerte -->
+                          <optgroup label="Bizerte">
+                            <option value="Bizerte-Center">Bizerte-Center</option>
+                            <option value="Menzel Bourguiba">Menzel Bourguiba</option>
+                            <option value="Ras Jebel">Ras Jebel</option>
+                            <option value="Metline">Metline</option>
+                            <option value="Sejnane">Sejnane</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Sousse -->
+                          <optgroup label="Sousse">
+                            <option value="Sousse-Center">Sousse-Center</option>
+                            <option value="Port El Kantaoui">Port El Kantaoui</option>
+                            <option value="Kalaa Kebira">Kalaa Kebira</option>
+                            <option value="Hammam Sousse">Hammam Sousse</option>
+                            <option value="Msaken">Msaken</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Monastir -->
+                          <optgroup label="Monastir">
+                            <option value="Monastir-Center">Monastir-Center</option>
+                            <option value="Skanes">Skanes</option>
+                            <option value="Sahline">Sahline</option>
+                            <option value="Bekalta">Bekalta</option>
+                            <option value="Jemmal">Jemmal</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Kairouan -->
+                          <optgroup label="Kairouan">
+                            <option value="Kairouan-Center">Kairouan-Center</option>
+                            <option value="Sbikha">Sbikha</option>
+                            <option value="Haffouz">Haffouz</option>
+                            <option value="Oueslatia">Oueslatia</option>
+                            <option value="Bou Hajla">Bou Hajla</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Gabès -->
+                          <optgroup label="Gabès">
+                            <option value="Gabès-Center">Gabès-Center</option>
+                            <option value="Gabès Sud">Gabès Sud</option>
+                            <option value="Mareth">Mareth</option>
+                            <option value="Matmata">Matmata</option>
+                            <option value="Ghannouch">Ghannouch</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Médenine -->
+                          <optgroup label="Médenine">
+                            <option value="Médenine-Center">Médenine-Center</option>
+                            <option value="Djerba">Djerba</option>
+                            <option value="Zarzis">Zarzis</option>
+                            <option value="Ben Guerdane">Ben Guerdane</option>
+                            <option value="Beni Khedache">Beni Khedache</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Tataouine -->
+                          <optgroup label="Tataouine">
+                            <option value="Tataouine-Center">Tataouine-Center</option>
+                            <option value="Remada">Remada</option>
+                            <option value="Dehiba">Dehiba</option>
+                          </optgroup>
+                          
+                          <!-- Gouvernorat de Gafsa -->
+                          <optgroup label="Gafsa">
+                            <option value="Gafsa-Center">Gafsa-Center</option>
+                            <option value="Métlaoui">Métlaoui</option>
+                            <option value="Redeyef">Redeyef</option>
+                            <option value="El Guettar">El Guettar</option>
+                            <option value="Moularès">Moularès</option>
+                          </optgroup>
                       </select>
                       </div>
                   </div>
@@ -1206,7 +1509,7 @@ input:checked + .slider::before {
                       <select name="driver" class="form-control bg-light custom-select" style="margin-left: 5px;">
                           <option value="homme">Homme</option>
                           <option value="femme">Femme</option>
-                          <option value="mixte" selected>Tout genre</option>
+                          <option value="mixte" selected>Homme/Femme</option>
                       </select>
                     </div>
                   </div>
@@ -1221,69 +1524,11 @@ input:checked + .slider::before {
                   </div>               
                   <!-- Date Input -->
                   <div class="d-flex align-items-center" style="margin: 10px;">
-                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 120px; display: inline-block;">Date <i class="fa fa-calendar"></i></span>                                     
+                    <span class="badge bg-gradient-secondary text-white py-2 px-2 me-3" style="width: 135px; display: inline-block;">Date <i class="fa fa-calendar"></i></span>                                     
                     <!-- Sélection du jour -->
-                    <select id="jour" name="jour" class="form-control" style="width: 80px; margin-right: 5px;">
-                        <option value="" disabled selected>JJ</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="26">26</option>
-                        <option value="27">27</option>
-                        <option value="28">28</option>
-                        <option value="29">29</option>
-                        <option value="30">30</option>
-                        <option value="31">31</option>
-                    </select>                                     
-                    <!-- Sélection du mois -->
-                    <select id="mois" name="mois" class="form-control" style="width: 100px; margin-right: 5px;">
-                        <option value="" disabled selected>MM</option>
-                        <option value="01">Jan</option>
-                        <option value="02">Feb</option>
-                        <option value="03">Mar</option>
-                        <option value="04">Apr</option>
-                        <option value="05">May</option>
-                        <option value="06">Jun</option>
-                        <option value="07">Jul</option>
-                        <option value="08">Aug</option>
-                        <option value="09">Sep</option>
-                        <option value="10">Oct</option>
-                        <option value="11">Nov</option>
-                        <option value="12">Dec</option>
-                    </select>                                 
-                    <!-- Sélection de l'année -->
-                    <select id="annee" name="annee" class="form-control" style="width: 100px;">
-                        <option value="" disabled selected>YYYY</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                        <option value="2028">2028</option>
-                        <option value="2029">2029</option>
-                        <option value="2030">2030</option>
-                    </select>
+                     <!-- Sélection du jour -->
+                     <input id="date" name="date" type="date" class="form-control text-center" placeholder=" Date" onchange="validateDateSelection()">
+                  
                 </div>
                 <!-- Heure Interval Input -->                                 
                 <div class="d-flex align-items-center" style="margin: 10px;">
@@ -1391,6 +1636,34 @@ input:checked + .slider::before {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  
+
+  function validateDateSelection() {
+    // Récupérer la date actuelle (avec uniquement la partie date, sans heure)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Réinitialise l'heure pour ne comparer que les dates
+
+    // Récupérer la date sélectionnée par l'utilisateur
+    const selectedDateInput = document.getElementById('date').value;
+
+    // Vérifier si une date a été sélectionnée
+    if (!selectedDateInput) {
+      alert("Veuillez sélectionner une date.");
+      return;
+    }
+
+    const selectedDate = new Date(selectedDateInput);
+
+    // Comparer les dates
+    if (selectedDate < today) {
+      alert("La date sélectionnée ne peut pas être antérieure à la date actuelle.");
+      // Réinitialiser la sélection de l'utilisateur
+      document.getElementById('date').value = "";
+    }
+  }
+</script>
+<script src="{{ ASSETS_ROOT }}/js/scripts.js"></script>
 
 
 
