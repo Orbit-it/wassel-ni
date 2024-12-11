@@ -209,95 +209,92 @@ $("#form_relance_trajet").on("submit", function (e) {
 });
 // End of Relancing TRAJET
 
-
-
-
-
-// Add TRAJET
-$("#form_add_trajet").on("submit", function (e) {
-  e.preventDefault();
-  let url = $(this).data("url");
-  let formData_trajet = $(this).serialize();
-  console.log("Submitting form to:", url, "with data:", formData_trajet);
-
-  $("#loading_trajet").removeClass("d-none");
-  $(".modal-footer button").prop("disabled", true);
-
-  $.ajax({
+  // Add TRAJET
+  $("#form_add_trajet").on("submit", function (e) {
+    e.preventDefault();
+    let url = $(this).data("url");
+    let formData_trajet = $(this).serialize();
+    console.log("Submitting form to:", url, "with data:", formData_trajet);
+  
+    $("#loading_trajet").removeClass("d-none");
+    $(".modal-footer button").prop("disabled", true);
+  
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: formData_trajet,
+        success: function (response) {
+            console.log("Response received:", response);
+            $("#loading_trajet").addClass("d-none");
+            if (response.status === "success") {
+                $("#success_trajet").removeClass("d-none");
+                $("#form_add_trajet").addClass("d-none");
+                $("#trajet_empty").addClass("d-none");
+                $("#form_add_trajet")[0].reset();
+                setTimeout(() => {
+                    $(".modal-footer button").prop("disabled", false);
+                    $("#addTrajet").removeClass("show").css("display", "none");
+                    $(".modal-backdrop").remove();
+                    $("#success_trajet").addClass("d-none");
+                    location.reload("#trip_dashboard");
+                }, 3000);
+            } else {
+                alert("Error: " + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error occurred:", { xhr, status, error });
+            $("#loading_trajet").addClass("d-none");
+            $(".modal-footer button").prop("disabled", false);
+            alert("Error lors de la soumission du formulaire.");
+        },
+    });
+  });
+  // End of Adding TRAJET
+  
+  // Add TRIP
+  $("#form_add_trip").on("submit", function (e) {
+    e.preventDefault(); // Empêche le rechargement de la page
+    let url = $(this).data("url"); // Récupère l'URL du formulaire
+    let formData_trip = $(this).serialize(); // Sérialise les données du formulaire
+  
+    // Affiche l'animation de chargement
+    $("#loading_trip").removeClass("d-none");
+    $(".modal-footer button").prop("disabled", true);
+    console.log(formData_trip);
+    // Effectue la requête AJAX
+    $.ajax({
       type: "POST",
       url: url,
-      data: formData_trajet,
+      data: formData_trip,
       success: function (response) {
-          console.log("Response received:", response);
-          $("#loading_trajet").addClass("d-none");
-          if (response.status === "success") {
-              $("#success_trajet").removeClass("d-none");
-              $("#form_add_trajet").addClass("d-none");
-              $("#trajet_empty").addClass("d-none");
-              $("#form_add_trajet")[0].reset();
-              setTimeout(() => {
-                  $(".modal-footer button").prop("disabled", false);
-                  $("#addTrajet").removeClass("show").css("display", "none");
-                  $(".modal-backdrop").remove();
-                  $("#success_trajet").addClass("d-none");
-                  location.reload("#trip_dashboard");
-              }, 3000);
-          } else {
-              alert("Error: " + response.message);
-          }
+        $("#loading_trip").addClass("d-none");
+        if (response.status == "success") {
+          $("#form_add_trip")[0].reset();
+          $("#form_add_trip").addClass("d-none");
+          $("#success_trip").removeClass("d-none");
+          
+          // Masque le modal après 3 secondes
+          setTimeout(() => {
+            $(".modal-footer button").prop("disabled", false);
+            $("#addTrip").removeClass("show").css("display", "none");
+            $(".modal-backdrop").remove();
+            $("#success_trip").addClass("d-none");
+            location.reload();
+          }, 3000);
+        } else {
+          alert(response.message);
+        }
       },
       error: function (xhr, status, error) {
-          console.error("Error occurred:", { xhr, status, error });
-          $("#loading_trajet").addClass("d-none");
-          $(".modal-footer button").prop("disabled", false);
-          alert("An error occurred while submitting the form.");
+        console.error("Error occurred:", { xhr, status, error });
+        $("#loading_trip").addClass("d-none");
+        $(".modal-footer button").prop("disabled", false);
+        alert("Une erreur est survenue lors de la soumission du formulaire.");
       },
+    });
   });
-});
-// End of Adding TRAJET
-
-// Add TRIP
-$("#form_add_trip").on("submit", function (e) {
-  e.preventDefault(); // Empêche le rechargement de la page
-  let url = $(this).data("url"); // Récupère l'URL du formulaire
-  let formData_trip = $(this).serialize(); // Sérialise les données du formulaire
-
-  // Affiche l'animation de chargement
-  $("#loading_trip").removeClass("d-none");
-  $(".modal-footer button").prop("disabled", true);
-  console.log(formData_trip);
-  // Effectue la requête AJAX
-  $.ajax({
-    type: "POST",
-    url: url,
-    data: formData_trip,
-    success: function (response) {
-      $("#loading_trip").addClass("d-none");
-      if (response.status == "success") {
-        $("#form_add_trip")[0].reset();
-        $("#form_add_trip").addClass("d-none");
-        $("#success_trip").removeClass("d-none");
-        
-        // Masque le modal après 3 secondes
-        setTimeout(() => {
-          $(".modal-footer button").prop("disabled", false);
-          $("#addTrip").removeClass("show").css("display", "none");
-          $(".modal-backdrop").remove();
-          $("#success_trip").addClass("d-none");
-          location.reload();
-        }, 3000);
-      } else {
-        alert(response.message);
-      }
-    },
-    error: function (e) {
-      $("#loading_trip").addClass("d-none");
-      $(".modal-footer button").prop("disabled", false);
-      alert("Une erreur est survenue."+e);
-    },
-  });
-});
-// End of Adding TRIP
+  // End of Adding TRIP
 
 // Parametres des Bagages pour les Drivers
 const bagageLeger = document.getElementById('bagage_leger');
