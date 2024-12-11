@@ -1,6 +1,7 @@
 
 from django import template
 from django.contrib.auth.decorators import login_required
+from django.utils.dateparse import parse_date, parse_time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import redirect
@@ -22,6 +23,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from .models import Trip, ChatMessage
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import logging
+
+logger = logging.getLogger(__name__)
 import json
 
 
@@ -79,14 +85,15 @@ def add_trajet_ajax(request):
         places = request.POST.get('nombre_places')
         heure = request.POST.get('heure')
         minute = request.POST.get('minute')
-        date = request.POST.get("date") 
+        date = request.POST.get("date")
+        date_parsed = parse_date(date) 
         
 
         if heure and minute:
             complete_heure = time(int(heure), int(minute))    
 
         # Vérifier les données reçues
-        if source and destination and prix and places and passagers and heure:
+        if source and destination and prix and places and passagers and heure and date_parsed:
             # Ajouter la voiture dans la base de données
             trajet = Trajet.objects.create(
                 source = source,
@@ -94,7 +101,7 @@ def add_trajet_ajax(request):
                 price_per_seat = prix, 
                 passengers_sex = passagers,
                 bagage = request.user.bagage,
-                date = date,
+                date = date_parsed,
                 heure = complete_heure,
                 driver = request.user,
                 places = places,
@@ -113,35 +120,53 @@ def add_trajet_ajax(request):
 @csrf_exempt  # Permet les requêtes POST AJAX
 def add_trip_ajax(request):
     if request.method == 'POST':
-        source = request.POST.get('source')
-        destination = request.POST.get('destination')
-        prix = request.POST.get('prix')
-        driver = request.POST.get('driver')
-        heure_min = request.POST.get('heure_min')
-        heure_max = request.POST.get('heure_max')
-        date = request.POST.get("date") 
-        
+        try:
+            # Récupérer les données POST
+            source = request.POST.get('source')
+            destination = request.POST.get('destination')
+            prix = request.POST.get('prix')
+            driver = request.POST.get('driver')
+            heure_min = request.POST.get('heure_min')
+            heure_max = request.POST.get('heure_max')
+            date = request.POST.get("date")
 
-        # Vérifier les données reçues
-        if source and destination and prix and driver and heure_min and heure_max:
-            # Ajouter la voiture dans la base de données
+            # Debugging: Log des données reçues
+            logger.debug(f"Reçu: source={source}, destination={destination}, prix={prix}, driver={driver}, heure_min={heure_min}, heure_max={heure_max}, date={date}")
+
+            # Parse de la date
+            try:
+                date_parsed = parse_date(date)
+                if not date_parsed:
+                    raise ValueError("Date invalide")
+            except Exception as e:
+                logger.error(f"Erreur de parsing de la date : {str(e)}")
+                return JsonResponse({"message": "Date invalide", "status": "error"})
+
+            # Vérifier les données requises
+            if not (source and destination and prix and driver and heure_min and heure_max and date_parsed):
+                return JsonResponse({"message": "Données invalides", "status": "error"})
+
+            # Ajouter le voyage dans la base de données
             trip = Trip.objects.create(
-                passenger = request.user,
-                source = source,
-                destination = destination,
-                driver_sexe = driver,
-                price_max = prix,
-                date = date,
-                heure_min = heure_min,
-                heure_max = heure_max,
-                bagage = request.user.bagage
+                passenger=request.user,
+                source=source,
+                destination=destination,
+                driver_sexe=driver,
+                price_max=prix,
+                date=date_parsed,
+                heure_min=heure_min,
+                heure_max=heure_max,
+                bagage=request.user.bagage
             )
             trip.save()
 
             # Retourner une réponse JSON
             return JsonResponse({"message": "Trip ajouté avec succès", "status": "success"})
-        else:
-            return JsonResponse({"message": "Données invalides", "status": "error"})
+
+        except Exception as e:
+            logger.error(f"Erreur interne : {str(e)}")
+            return JsonResponse({"message": f"Erreur interne : {str(e)}", "status": "error"})
+
     return JsonResponse({"message": "Requête non valide", "status": "error"})
 
 
@@ -292,12 +317,27 @@ def match_trip_to_trajet(trip):
     trajets = trajets.filter(
         heure__gte=trip.heure_min,  # L'heure du trajet doit être après `heure_min`
         heure__lte=trip.heure_max,  # L'heure doit être avant `heure_max`
-        #driver__sex=trip.driver_sexe  # Filtrer par sexe du conducteur si nécessaire
     )
+
+    # Filtrer les trajets en fonction des préférences de genre
+    filtered_trajets = []
+    for trajet in trajets:
+        if (
+            (trajet.passengers_sex == "femme" and trip.passenger.sexe == "homme") or
+            (trajet.passengers_sex == "homme" and trip.passenger.sexe == "femme") or
+            (trajet.driver.sexe == "femme" and trip.driver_sexe == "homme") or
+            (trajet.driver.sexe == "homme" and trip.driver_sexe == "femme")
+        ):
+            continue  # Skip this trajet as it doesn't meet the preferences
+        filtered_trajets.append(trajet)
+
+    # If needed, apply the filtered list back
+
+    trajets = filtered_trajets
     
     
-    if trajets.exists():
-        trajet = trajets.first()  # Récupérer le premier trajet
+    if trajets:
+        trajet = trajets[0] # Récupérer le premier trajet
         print(f"Avant mise à jour : places={trajet.places}, is_full={trajet.is_full}")
 
         # Mise à jour des informations du trajet avec update()
