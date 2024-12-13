@@ -30,7 +30,7 @@ class SignUpStep1Form(forms.Form):
         )
     )
     phone = forms.CharField(
-        required=True,
+        required=False,
         label="Entrer votre numéro de Téléphone:",
         widget=forms.TextInput(
             attrs={"placeholder": "Téléphone", "class": "form-control"}
@@ -42,12 +42,17 @@ class SignUpStep1Form(forms.Form):
         choices=GENRE_CHOICES,
         widget=forms.Select(attrs={"class": "form-select"})
     )
-
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if not re.match(r'^\+?\d{8,15}$', phone):
             raise ValidationError("Numéro de téléphone invalide.")
         return phone
+    
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if not re.match(r'^\S+$', username):
+            raise ValidationError("Le nom d'utilisateur ne doit pas contenir d'espace.")
+        return username
 
 # SignUpStep2Form - collects email, type, and status
 class SignUpStep2Form(forms.Form):
@@ -60,7 +65,7 @@ class SignUpStep2Form(forms.Form):
         ('Driver', 'Chauffeur'),
     ]
     email = forms.EmailField(
-        required=False,
+        required=True,
         widget=forms.EmailInput(
             attrs={"placeholder": "Email", "class": "form-control"}
         )
